@@ -1,0 +1,20 @@
+{   
+   "secretsManagementSettings": {
+      "pollingIntervalInS": "60",
+      "linkOnRenewal": true,
+      "observedCertificates":
+      [
+         {
+            "url": "https://certlc-kv01.vault.azure.net:443/secrets/pippo",
+            "certificateStoreName": "MY",
+            "certificateStoreLocation": "LocalMachine",
+            "keyExportable": true,
+            "accounts": [
+               "Network Service",
+               "Local Service"
+            ]
+         }
+      ]
+   }  
+}
+
