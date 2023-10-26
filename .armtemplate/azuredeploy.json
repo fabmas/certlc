@@ -402,7 +402,8 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('CAnicName'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('DCvmName'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('DCvmName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('DCvmName'), 'CreateADForest')]"   
             ]
             },
             {
