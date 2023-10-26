@@ -20,13 +20,6 @@
                 "description": "The FQDN of the Active Directory Domain to be created"
             }
         },
-        "dnsPrefix": {
-            "type": "string",
-            "defaultValue": "[concat('ad-', uniqueString(resourceGroup().id))]",
-            "metadata": {
-                "description": "The DNS prefix for the public IP address used by the Load Balancer"
-            }
-        },
         "vmSize": {
             "type": "string",
             "defaultValue": "Standard_D2s_v3",
@@ -57,7 +50,7 @@
         },
         "virtualMachineName": {
             "type": "string",
-            "defaultValue": "ad-vm",
+            "defaultValue": "dc01",
             "metadata": {
                 "description": "Virtual machine name."
             }
@@ -99,13 +92,8 @@
         }
     },
     "variables": {
-        "loadBalancerFrontEndIPName": "ad-LBFE",
-        "backendAddressPoolName": "ad-LBBE",
-        "inboundNatRulesName": "ad-RDP",
-        "networkInterfaceName": "ad-nic",
-        "publicIPAddressName": "ad-ip",
-        "availabilitySetName": "ad-AvailabiltySet",
-        "loadBalancerName": "ad-LoadBalancer"
+        "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic')]",
+        "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-ip')]"
     },
     "resources": [
         {
@@ -114,25 +102,10 @@
             "name": "[variables('publicIPAddressName')]",
             "location": "[parameters('location')]",
             "properties": {
-                "publicIPAllocationMethod": "Static",
-                "dnsSettings": {
-                    "domainNameLabel": "[parameters('dnsPrefix')]"
+                "publicIPAllocationMethod": "Static"
                 }
-            }
         },
-        {
-            "type": "Microsoft.Compute/availabilitySets",
-            "apiVersion": "2022-03-01",
-            "location": "[parameters('location')]",
-            "name": "[variables('availabilitySetName')]",
-            "properties": {
-                "PlatformUpdateDomainCount": 20,
-                "PlatformFaultDomainCount": 2
-            },
-            "sku": {
-                "name": "Aligned"
-            }
-        },
+
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
@@ -163,53 +136,12 @@
             }
         },
         {
-            "type": "Microsoft.Network/loadBalancers",
-            "apiVersion": "2022-01-01",
-            "name": "[variables('loadBalancerName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[variables('publicIPAddressName')]"
-            ],
-            "properties": {
-                "frontendIPConfigurations": [
-                    {
-                        "name": "[variables('loadBalancerFrontEndIPName')]",
-                        "properties": {
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
-                            }
-                        }
-                    }
-                ],
-                "backendAddressPools": [
-                    {
-                        "name": "[variables('backendAddressPoolName')]"
-                    }
-                ],
-                "inboundNatRules": [
-                    {
-                        "name": "[variables('inboundNatRulesName')]",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('loadBalancerName'), variables('loadBalancerFrontEndIPName'))]"
-                            },
-                            "protocol": "Tcp",
-                            "frontendPort": 3389,
-                            "backendPort": 3389,
-                            "enableFloatingIP": false
-                        }
-                    }
-                ]
-            }
-        },
-        {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2022-01-01",
             "name": "[variables('networkInterfaceName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "VNet",
-                "[variables('loadBalancerName')]"
+                "VNet"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -221,16 +153,12 @@
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
                             },
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('loadBalancerName'), variables('backendAddressPoolName'))]"
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]",
+                                "properties": {
+                                    "deleteOption": "Delete"
                                 }
-                            ],
-                            "loadBalancerInboundNatRules": [
-                                {
-                                    "id": "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('loadBalancerName'), variables('inboundNatRulesName'))]"
-                                }
-                            ]
+                            }
                         }
                     }
                 ]
@@ -242,16 +170,11 @@
             "name": "[parameters('virtualMachineName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[variables('networkInterfaceName')]",
-                "[variables('availabilitySetName')]",
-                "[variables('loadBalancerName')]"
+                "[variables('networkInterfaceName')]"
             ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
-                },
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
                 },
                 "osProfile": {
                     "computerName": "[parameters('virtualMachineName')]",
@@ -263,7 +186,7 @@
                         "publisher": "MicrosoftWindowsServer",
                         "offer": "WindowsServer",
                         "sku": "2022-Datacenter",
-                        "version": "latest"  // use latest after https://support.microsoft.com/en-us/topic/kb5004442-manage-changes-for-windows-dcom-server-security-feature-bypass-cve-2021-26414-f1400b52-c141-43d2-941e-37ed901c769c is addressed
+                        "version": "latest"  
                     },
                     "osDisk": {
                         "name": "[concat(parameters('virtualMachineName'),'_OSDisk')]",
