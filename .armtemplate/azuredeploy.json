@@ -215,7 +215,8 @@
             "name": "[variables('CAnicName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "VNet"
+                "VNet",
+                "[variables('DCnicName')]"
             ],
             "properties": {
                 "ipConfigurations": [
