@@ -10,6 +10,7 @@
 1. (per Linux):https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux
 1. (per ARC): https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739
 1. configure token lifetime : https://learn.microsoft.com/it-it/entra/identity-platform/configure-token-lifetimes
+1. Configure Enterprise RootCA: https://bgelens.nl/integrating-vm-role-with-desired-state-configuration-part-2-pki/
 
 ## Note
 - Salvare il certificato (e non il secret) all'interno di "Certificate" nel keyvault
