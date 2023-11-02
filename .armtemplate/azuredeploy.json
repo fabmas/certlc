@@ -430,7 +430,28 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
             ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('CAvmName'), '/RunPowerShellScript')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.10",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "https://raw.githubusercontent.com/Azure/forensics/main/.powershell/soc-hrw.ps1"
+                    ],
+                    "commandToExecute": "[concat(' start powershell -ExecutionPolicy Unrestricted -File soc-hrw.ps1 -regionCode ', parameters('coc-soc-Location') ,' -StorageAccountResourceID ', resourceId('Microsoft.Storage/storageAccounts', parameters('coc-soc-storageAccount_name')), ' -HRWIdentity ', reference(resourceId('Microsoft.Compute/virtualMachines', parameters('coc-soc-HRW_VM_name')), '2023-03-01', 'full').identity.principalId)]"
+                }
             }
+        }        
     ],
     "outputs": {
         "dnsIpAddress": {
