@@ -10,16 +10,16 @@ Import-Module ADCSTemplate
 #region params
 Param 
 (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, Position=0)]
     [String]$CAName,
  
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, Position=1)]
     [String]$CDPURL,
  
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, Position=2)]
     [String]$WebenrollURL,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, Position=3)]
     [String]$demoCertDNSName
 )
 #endregion params

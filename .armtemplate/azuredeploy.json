@@ -437,7 +437,8 @@
             "name": "[concat(parameters('CAvmName'), '/RunPowerShellScript')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('CAvmName'), 'joindomain')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Compute",
@@ -446,9 +447,9 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/fabmas/certlc/main/.scripts/InstallEntRootCA.ps1"
+                        "https://raw.githubusercontent.com/fabmas/certlc/main/.scripts/ExecuteScript.ps1"
                     ],
-                    "commandToExecute": "[concat(' start powershell -ExecutionPolicy Unrestricted -File InstallEntRootCA.ps1 -CAName DEMOCA -CDPURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -WebenrollURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -demoCertDNSName ', concat('democert.',parameters('DomainName')) )]"
+                    "commandToExecute": "[concat(' start powershell -ExecutionPolicy Unrestricted -File ExecuteScript.ps1 -DomainAdminName ', parameters('DomainAdminUsername'), ' -DomainAdminPWD ', parameters('DomainAdminPassword'), ' -CAName DEMOCA -CDPURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -WebenrollURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -demoCertDNSName ', concat('democert.',parameters('DomainName')) )]"
                 }
             }
         }        
