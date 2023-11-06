@@ -12,15 +12,6 @@ Param
     [Parameter(Mandatory=$true, Position=3)]
     [String]$demoCertDNSName
 )
-whoami 
-whoami /groups
-
-Write-host $CAName
-Write-host $CDPURL
-Write-host $WebenrollURL
-Write-host $demoCertDNSName
-
-Pause
 
 #region modules
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
