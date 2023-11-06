@@ -1,15 +1,3 @@
-#region modules
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-
-Add-WindowsFeature RSAT-AD-PowerShell
-Import-Module ActiveDirectory -Force
- 
-Install-Module ADCSTemplate -Force
-Import-Module ADCSTemplate -Force
-
-#end region modules
-
-#region params
 Param 
 (
     [Parameter(Mandatory=$true, Position=0)]
@@ -24,7 +12,28 @@ Param
     [Parameter(Mandatory=$true, Position=3)]
     [String]$demoCertDNSName
 )
-#endregion params
+whoami 
+whoami /groups
+
+Write-host $CAName
+Write-host $CDPURL
+Write-host $WebenrollURL
+Write-host $demoCertDNSName
+
+Pause
+
+#region modules
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+
+Add-WindowsFeature RSAT-AD-PowerShell
+Import-Module ActiveDirectory -Force
+ 
+Install-Module ADCSTemplate -Force
+Import-Module ADCSTemplate -Force
+
+#end region modules
+
+
 
 #region normalize URL to FQDN
 if ($CDPURL -like "http://*" -or $CDPURL -like "https://*")

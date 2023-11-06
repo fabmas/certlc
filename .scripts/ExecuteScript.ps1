@@ -30,10 +30,10 @@ New-Item -Path $ScriptFolder -ItemType Directory -Force |Out-Null
 $ScriptName="InstallEntRootCA.ps1"
 $ScriptPath="$ScriptFolder\$ScriptName"
 $ScriptURL="https://raw.githubusercontent.com/fabmas/certlc/main/.scripts/InstallEntRootCA.ps1"
-Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
+#Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
 
 # then run the following command to execute the script
-Invoke-Command -FilePath $ScriptPath -ComputerName localhost -Credential $SecureCreds -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
+# Invoke-Command -FilePath $ScriptPath -ComputerName $env:COMPUTERNAME -Credential $SecureCreds -Authentication Negotiate -EnableNetworkAccess -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
 
-
+Start-Process -FilePath "powershell.exe " -Credential $SecureCreds -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
 
