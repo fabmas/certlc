@@ -1,9 +1,9 @@
 #region modules
 Add-WindowsFeature RSAT-AD-PowerShell
-Import-Module ActiveDirectory
+Import-Module ActiveDirectory -Force
  
 Install-Module ADCSTemplate -Force
-Import-Module ADCSTemplate
+Import-Module ADCSTemplate -Force
 
 #end region modules
 
