@@ -171,7 +171,8 @@ Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
 #endregion modify Enrollment Server URL in AD
 
 #region create and publish WebServerShort certificate template
-
+Install-Module ADCSTemplate -Force
+Import-Module ADCSTemplate -Force
 
 $TemplateJSON = '{
     "name":  "TemporaryTemplate",
@@ -229,7 +230,7 @@ $TemplateJSON = '{
 }'
 
 
-$WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $TemplateJSON -Identity "$((Get-ADDomain).NetBIOSName)\$($env:computername)$" 
+$WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $TemplateJSON -Identity "$((Get-ADDomain).NetBIOSName)\$($env:computername)$" -Publish
 
 #endregion create and publish WebServerShort certificate template
 
