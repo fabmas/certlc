@@ -450,7 +450,7 @@
                     "fileUris": [
                         "https://raw.githubusercontent.com/fabmas/certlc/main/.scripts/ExecuteScript.ps1"
                     ],
-                    "commandToExecute": "[concat(' start powershell -ExecutionPolicy Unrestricted -File ExecuteScript.ps1 -DomainAdminName ', parameters('DomainName'), '\\\\', parameters('DomainAdminUsername'), ' -DomainAdminPWD ', parameters('DomainAdminPassword'), ' -CAName DEMOCA -CDPURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -WebenrollURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -demoCertDNSName ', concat('democert.',parameters('DomainName')) )]"
+                    "commandToExecute": "[concat(' start powershell -ExecutionPolicy Unrestricted -File ExecuteScript.ps1 -DomainAdminName ',  parameters('DomainAdminUsername'), '@',parameters('DomainName'), ' -DomainAdminPWD ', parameters('DomainAdminPassword'), ' -CAName DEMOCA -CDPURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -WebenrollURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -demoCertDNSName ', concat('democert.',parameters('DomainName')) )]"
                 }
             }
         }        
