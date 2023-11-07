@@ -37,5 +37,6 @@ $ScriptURL="https://raw.githubusercontent.com/fabmas/certlc/main/.scripts/Instal
 Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
 
 # then run the following command to execute the script
-Start-Process -FilePath "powershell.exe " -Credential $SecureCreds -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
+#Start-Process -FilePath "powershell.exe " -Credential $SecureCreds -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
 
+Invoke-Command -ComputerName $env:COMPUTERNAME -FilePath $ScriptPath -Credential $SecureCreds -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
