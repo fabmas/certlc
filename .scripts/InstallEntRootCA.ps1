@@ -105,6 +105,10 @@ AlternateSignatureAlgorithm=1
 Critical = 2.5.29.15
 "@ | Out-File C:\Windows\capolicy.inf -Force
  
+if ($DomainAdminName -like "*@*") {
+    $parts = $DomainAdminName -split "@"
+    $DomainAdminName = $parts[1] + "\" + $parts[0]
+}
 
 $SecureString = ConvertTo-SecureString -AsPlainText $DomainAdminPWD -Force
 $SecureCreds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $DomainAdminName,$SecureString 
