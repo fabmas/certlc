@@ -1,5 +1,11 @@
 Param 
 (
+    [Parameter(Mandatory=$true)]
+    [String]$DomainAdminName,
+ 
+    [Parameter(Mandatory=$true)]
+    [String]$DomainAdminPWD,
+
     [Parameter(Mandatory=$true, Position=0)]
     [String]$CAName,
  
@@ -97,11 +103,8 @@ Critical = 2.5.29.15
 "@ | Out-File C:\Windows\capolicy.inf -Force
  
 
-$SecureString = ConvertTo-SecureString -AsPlainText "password.12345" -Force
-$DomainAdminName = "demo\demoadmin"
+$SecureString = ConvertTo-SecureString -AsPlainText $DomainAdminPWD -Force
 $SecureCreds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $DomainAdminName,$SecureString 
-
-$Error.Clear()
 
 Install-AdcsCertificationAuthority -CACommonName $CAName `
                                    -CAType EnterpriseRootCA `
@@ -146,7 +149,7 @@ certutil -CRL
 #endregion restart CA service and publish CRL
  
 #region add webserver template
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
+Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -Credential $SecureCreds -ScriptBlock {
     $DN = (Get-ADDomain).DistinguishedName
     $WebTemplate = "CN=WebServer,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$DN"
     DSACLS $WebTemplate /G "Authenticated Users:CA;Enroll"
@@ -157,7 +160,7 @@ certutil -setcatemplates +WebServer
 #endregion add webserver template
  
 #region request web server certificate
-$cert = Get-Certificate -Template webserver -DnsName $webenrollURL -SubjectName "CN=$webenrollURL" -CertStoreLocation cert:\LocalMachine\My
+$cert = Get-Certificate -Credential $SecureCreds -Template webserver -DnsName $webenrollURL -SubjectName "CN=$webenrollURL" -CertStoreLocation cert:\LocalMachine\My
 #endregion request web server certificate
  
 #region Install enrollment web services
@@ -167,7 +170,7 @@ Install-AdcsEnrollmentWebService -AuthenticationType UserName -SSLCertThumbprint
 #endregion Install enrollment web services
  
 #region modify Enrollment Server URL in AD
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
+Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -Credential $SecureCreds -ScriptBlock {
     param
     (
         $CAName,
@@ -175,7 +178,7 @@ Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
     )
     $DN = (Get-ADDomain).DistinguishedName
     $CAEnrollmentServiceDN = "CN=$CAName,CN=Enrollment Services,CN=Public Key Services,CN=Services,CN=Configuration,$DN"
-    Set-ADObject $CAEnrollmentServiceDN -Replace @{'msPKI-Enrollment-Servers'="1`n4`n0`nhttps://$webenrollURL/$CAName`_CES_UsernamePassword/service.svc/CES`n0"}
+    Set-ADObject $CAEnrollmentServiceDN -Replace @{'msPKI-Enrollment-Servers'="1`n4`n0`nhttps://$webenrollURL/$CAName`_CES_UsernamePassword/service.svc/CES`n0"} 
 } -ArgumentList $CAName, $webenrollURL
 #endregion modify Enrollment Server URL in AD
 
@@ -244,5 +247,5 @@ $WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $Templa
 #endregion create and publish WebServerShort certificate template
 
 #region request Web Server Short certificate
-$cert = Get-Certificate -Template webservershort -DnsName $demoCertDNSName -SubjectName "CN=democert" -CertStoreLocation cert:\LocalMachine\My
+$cert = Get-Certificate -Credential $SecureCreds -Template webservershort -DnsName $demoCertDNSName -SubjectName "CN=democert" -CertStoreLocation cert:\LocalMachine\My
 #endregion request Web Server Short certificate
