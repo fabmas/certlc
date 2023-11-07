@@ -1,21 +1,24 @@
 Param 
 (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, Position=0)]
     [String]$DomainAdminName,
  
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true, Position=1)]
     [String]$DomainAdminPWD,
 
-    [Parameter(Mandatory=$true, Position=0)]
-    [String]$CAName,
- 
-    [Parameter(Mandatory=$true, Position=1)]
-    [String]$CDPURL,
- 
     [Parameter(Mandatory=$true, Position=2)]
-    [String]$WebenrollURL,
+    [String]$DCvmName,
 
     [Parameter(Mandatory=$true, Position=3)]
+    [String]$CAName,
+ 
+    [Parameter(Mandatory=$true, Position=4)]
+    [String]$CDPURL,
+ 
+    [Parameter(Mandatory=$true, Position=5)]
+    [String]$WebenrollURL,
+
+    [Parameter(Mandatory=$true, Position=6)]
     [String]$demoCertDNSName
 )
 
@@ -149,7 +152,7 @@ certutil -CRL
 #endregion restart CA service and publish CRL
  
 #region add webserver template
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -Credential $SecureCreds -ScriptBlock {
+Invoke-Command -ComputerName $DCvmName -Credential $SecureCreds -ScriptBlock {
     $DN = (Get-ADDomain).DistinguishedName
     $WebTemplate = "CN=WebServer,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$DN"
     DSACLS $WebTemplate /G "Authenticated Users:CA;Enroll"
@@ -170,7 +173,7 @@ Install-AdcsEnrollmentWebService -AuthenticationType UserName -SSLCertThumbprint
 #endregion Install enrollment web services
  
 #region modify Enrollment Server URL in AD
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -Credential $SecureCreds -ScriptBlock {
+Invoke-Command -ComputerName $DCvmName -Credential $SecureCreds -ScriptBlock {
     param
     (
         $CAName,
