@@ -96,6 +96,13 @@ AlternateSignatureAlgorithm=1
 Critical = 2.5.29.15
 "@ | Out-File C:\Windows\capolicy.inf -Force
  
+
+$SecureString = ConvertTo-SecureString -AsPlainText "password.12345" -Force
+$DomainAdminName = "demo\demoadmin"
+$SecureCreds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $DomainAdminName,$SecureString 
+
+$Error.Clear()
+
 Install-AdcsCertificationAuthority -CACommonName $CAName `
                                    -CAType EnterpriseRootCA `
                                    -CADistinguishedNameSuffix 'O=DEMO,C=IT' `
@@ -104,7 +111,9 @@ Install-AdcsCertificationAuthority -CACommonName $CAName `
                                    -ValidityPeriodUnits 10 `
                                    -CryptoProviderName 'RSA#Microsoft Software Key Storage Provider' `
                                    -KeyLength 4096 `
+                                   -Credential $SecureCreds `
                                    -Force
+                                   
 
 certutil -setreg CA\AuditFilter 127
 #certutil -setreg CA\ValidityPeriodUnits 4
