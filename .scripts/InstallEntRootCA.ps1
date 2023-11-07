@@ -167,7 +167,7 @@ certutil -setcatemplates +WebServer
 #endregion add webserver template
  
 #region request web server certificate
-$cert = Get-Certificate -Credential $SecureCreds -Template webserver -DnsName $webenrollURL -SubjectName "CN=$webenrollURL" -CertStoreLocation cert:\LocalMachine\My
+$cert = Get-Certificate -Template webserver -DnsName $webenrollURL -SubjectName "CN=$webenrollURL" -CertStoreLocation cert:\LocalMachine\My
 #endregion request web server certificate
  
 #region Install enrollment web services
@@ -254,5 +254,5 @@ $WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $Templa
 #endregion create and publish WebServerShort certificate template
 
 #region request Web Server Short certificate
-$cert = Get-Certificate -Credential $SecureCreds -Template webservershort -DnsName $demoCertDNSName -SubjectName "CN=democert" -CertStoreLocation cert:\LocalMachine\My
+$cert = Get-Certificate -Template webservershort -DnsName $demoCertDNSName -SubjectName "CN=democert" -CertStoreLocation cert:\LocalMachine\My
 #endregion request Web Server Short certificate
