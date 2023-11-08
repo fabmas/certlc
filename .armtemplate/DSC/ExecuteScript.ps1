@@ -25,10 +25,8 @@ configuration ExecuteScript
         [String]$WebenrollURL,
 
         [Parameter(Mandatory=$true)]
-        [String]$demoCertDNSName,
+        [String]$demoCertDNSName
 
-        [Int]$RetryCount=20,
-        [Int]$RetryIntervalSec=30
     )
     Import-DscResource -ModuleName PSDesiredStateConfiguration, PackageManagement
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
@@ -75,20 +73,9 @@ configuration ExecuteScript
                 Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
 
                 # then run the following command to execute the script
-                #Start-Process -FilePath "powershell.exe " -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
 
-                # $a = @()
-                # $a += ("-CAName", "DEMOCA")
-                # $a += ("-CDPURL", $CDPURL)
-                # $a += ("-WebenrollURL", $WebenrollURL)
-                # $a += ("-demoCertDNSName", $demoCertDNSName)
+                Invoke-Expression "$ScriptPath -DCvmName $($DCvmName) -CAvmName $($CAvmName) -CAName $($CAName) -CDPURL $($CDPURL) -WebenrollURL $($WebenrollURL) -demoCertDNSName $($demoCertDNSName)"
 
-                #Invoke-Expression "$ScriptPath $a"
-                Invoke-Expression "$ScriptPath -DCvmName DC01 -CAvmName CA01 -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"
-
-                #Invoke-Command -ComputerName $env:COMPUTERNAME -FilePath $ScriptPath -Credential $SecureCreds -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
-
-            
             }            
         }
     
