@@ -400,44 +400,6 @@
                     ]
                 }
             },
-                        "resources": [
-                {
-                    "type": "extensions",
-                    "apiVersion": "2022-03-01",
-                    "name": "CreateADForest",
-                    "location": "[parameters('location')]",
-                    "dependsOn": [
-                        "[parameters('DCvmName')]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.19",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "ModulesUrl": "[uri(parameters('_artifactsLocation'), concat('DSC/ExecuteScript.ps1', parameters('_artifactsLocationSasToken')))]",
-                            "ConfigurationFunction": "ExecuteScript.ps1\\ExecuteScript",
-                            "Properties": {
-                                "DomainName": "[parameters('DomainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('DomainAdminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
-                                },
-                                "DCvmName": "[parameters('DCvmName')]",
-                                "CAName": "DEMOCA",
-                                "CDPURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
-                                "WebenrollURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
-                                "demoCertDNSName": "[concat('democert.',parameters('DomainName'))]"
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('DomainAdminPassword')]"
-                            }
-                        }
-                    }
-                }
-            ],
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('CAnicName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('DCvmName'))]",
@@ -473,22 +435,37 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2022-03-01",
-            "name": "[concat(parameters('CAvmName'), '/RunPowerShellScript')]",
+            "name": "[concat(parameters('CAvmName'), '/ExecuteScript')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('CAvmName'), 'joindomain')]"
             ],
             "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "CustomScriptExtension",
-                "typeHandlerVersion": "1.10",
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "fileUris": [
-                        "https://raw.githubusercontent.com/fabmas/certlc/main/.scripts/ExecuteScript.ps1"
-                    ],
-                    "commandToExecute": "[concat(' start powershell -ExecutionPolicy Unrestricted -File ExecuteScript.ps1 -DomainAdminName ',  parameters('DomainAdminUsername'), '@',parameters('DomainName'), ' -DomainAdminPWD ', parameters('DomainAdminPassword'), ' -DCvmName ', parameters('DCvmName') ,' -CAName DEMOCA -CDPURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -WebenrollURL ', concat('http://',parameters('CAvmName'),'.',parameters('DomainName')), ' -demoCertDNSName ', concat('democert.',parameters('DomainName')) )]"
+                    "ModulesUrl": "[uri(parameters('_artifactsLocation'), concat('DSC/ExecuteScript.ps1', parameters('_artifactsLocationSasToken')))]",
+                    "ConfigurationFunction": "ExecuteScript.ps1\\ExecuteScript",
+                    "Properties": {
+                        "DomainName": "[parameters('DomainName')]",
+                        "AdminCreds": {
+                            "UserName": "[parameters('DomainAdminUsername')]",
+                            "Password": "PrivateSettingsRef:AdminPassword"
+                        },
+                        "DCvmName": "[parameters('DCvmName')]",
+                        "CAName": "DEMOCA",
+                        "CDPURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
+                        "WebenrollURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
+                        "demoCertDNSName": "[concat('democert.',parameters('DomainName'))]"
+                    }
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('DomainAdminPassword')]"
+                    }
                 }
             }
         }        
