@@ -104,13 +104,46 @@
             "metadata": {
                 "description": "The password for the administrator account of the new VM."
             }
-        }     
+        },
+        "KeyvaultName": {
+            "metadata": {
+                "description": "UNIQUE name of the Key Vault resource"
+            },
+            "type": "String",
+            "defaultValue": "DEMO-KV-<UNIQUESTRING>"
+        },
+        "AutomationAccountName": {
+            "metadata": {
+                "description": "Name of the Automation Account resource"
+            },
+            "type": "String",
+            "defaultValue": "DEMO-AA-<UNIQUESTRING>"
+        },
+        "WorkerGroupName": {
+            "metadata": {
+                "description": "Name of the Hybrid Runbook Worker Group"
+            },
+            "defaultValue": "SubordinateCA",
+            "type": "string"
+        },
+
+
+
+
+        "_CurrentDateTimeInTicks": {
+            "metadata": {
+                "description": "Current date time in ticks used for unique variables"
+            },
+            "type": "string",
+            "defaultValue": "[utcNow('yyyy-MM-dd')]"
+        }
     
     },
     "variables": {
         "DCnicName": "[concat(parameters('DCvmName'),'-nic')]",
         "DCpublicIPAddressName": "[concat(parameters('DCvmName'),'-ip')]",
-        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]"
+        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]",
+        "UniqueStringBasedOnTimeStamp": "[uniqueString(deployment().name, parameters('_CurrentDateTimeInTicks'))]",
     },
     "resources": [
         {
@@ -445,7 +478,138 @@
                     }
                 }
             }
-        }        
+        },
+
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2023-02-01",
+            "name": "[parameters('KeyvaultName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+            ],
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Deny",
+                    "ipRules": [],
+                    "virtualNetworkRules": [
+                        {
+                            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/',parameters('subnetName'))]",
+                            "ignoreMissingVnetServiceEndpoint": false
+                        }
+                    ]
+                },
+                "accessPolicies": [],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": true,
+                "enabledForTemplateDeployment": false,
+                "enableSoftDelete": true,
+                "softDeleteRetentionInDays": 90,
+                "enableRbacAuthorization": true,
+                "enablePurgeProtection": true,
+                "vaultUri": "[concat(concat('https://',parameters('KeyvaultName')),'.vault.azure.net/')]",
+                "provisioningState": "Succeeded",
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+
+                {
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2022-08-08",
+            "name": "[parameters('AutomationAccountName')]",
+            "location": "[parameters('Location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "publicNetworkAccess": true,
+                "disableLocalAuth": false,
+                "sku": {
+                    "name": "Basic"
+                },
+                "encryption": {
+                    "keySource": "Microsoft.Automation",
+                    "identity": {}
+                }
+            },
+            "resources": [
+                {
+                "name": "[parameters('WorkerGroupName')]",
+                "type": "hybridRunbookWorkerGroups",
+                "apiVersion": "2022-02-22",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
+                    "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                ],
+                "resources" : [
+                    {
+                    "name": "[guid('testhw', variables('UniqueStringBasedOnTimeStamp'))]",
+                    "type": "hybridRunbookWorkers",
+                    "apiVersion": "2021-06-22",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/hybridRunbookWorkerGroups', parameters('AutomationAccountName'),parameters('WorkerGroupName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                    ],
+                    "properties": {
+                        "vmResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                    }
+                    }
+                ]
+                }
+            ]
+        },
+
+        {
+            "type": "Microsoft.Automation/automationAccounts/runbooks",
+            "apiVersion": "2022-08-08",
+            "name": "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]",
+            "location": "[parameters('Location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+            ],
+            "properties": {
+                "runbookType": "PowerShell",
+                "logVerbose": false,
+                "logProgress": false,
+                "logActivityTrace": 0,
+                "description": "Certificate Lifecycle Management",
+                 "publishContentLink": {
+                    "uri": "https://raw.githubusercontent.com/fabmas/certlc/main/.runbook/runbook_v2.ps1",
+                    "version": "2.1.0.0"
+                }
+            }
+        },        
+
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('CAvmName'),'/HybridWorkerExtension')]",
+            "apiVersion": "2022-03-01",
+            "location": "[parameters('Location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Automation.HybridWorker",
+                "type": "HybridWorkerForWindows",
+                "typeHandlerVersion": "1.1",
+                "autoUpgradeMinorVersion": true,
+                "enableAutomaticUpgrade": true,
+                "settings": {
+                "AutomationAccountURL": "[reference(resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))).AutomationHybridServiceUrl]"
+                
+                }
+            }
+        }              
     ],
     "outputs": {
         "dnsIpAddress": {
