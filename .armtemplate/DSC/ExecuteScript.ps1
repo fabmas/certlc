@@ -24,12 +24,28 @@ configuration ExecuteScript
         [Parameter(Mandatory=$true)]
         [String]$demoCertDNSName
     )
-
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, PackageManagement
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
     
     Node localhost
     {
   
+        PackageManagementSource PSGallery
+        {
+            Ensure              = "Present"
+            Name                = "PSGallery"
+            ProviderName        = "PowerShellGet"
+            SourceLocation      = "https://www.powershellgallery.com/api/v2"
+            InstallationPolicy  = "Trusted"
+        }
+
+        PackageManagement PSModuleADCSTemplate
+        {
+            Ensure               = "Present"
+            Name                 = "ADCSTemplate"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
     
         script 'ExecuteScript'
         {

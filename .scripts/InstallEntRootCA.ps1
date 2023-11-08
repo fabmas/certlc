@@ -19,13 +19,11 @@ Param
 
 #region modules
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted 
-Install-Module -Name PowerShellGet -Force
 
 Add-WindowsFeature RSAT-AD-PowerShell
 Import-Module ActiveDirectory -Force
  
-Install-Module ADCSTemplate -Force
+#Install-Module ADCSTemplate -Force
 Import-Module ADCSTemplate -Force
 
 #end region modules
@@ -178,7 +176,7 @@ Invoke-Command -ComputerName $DCvmName -ScriptBlock {
 #endregion modify Enrollment Server URL in AD
 
 #region create and publish WebServerShort certificate template
-Install-Module ADCSTemplate -Force
+#Install-Module ADCSTemplate -Force
 Import-Module ADCSTemplate -Force
 
 $TemplateJSON = '{
