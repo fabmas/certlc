@@ -74,7 +74,8 @@ configuration ExecuteScript
 
                 # then run the following command to execute the script
 
-                Invoke-Expression "$ScriptPath -DCvmName $($DCvmName) -CAvmName $($CAvmName) -CAName $($CAName) -CDPURL $($CDPURL) -WebenrollURL $($WebenrollURL) -demoCertDNSName $($demoCertDNSName)"
+                #Invoke-Expression "$ScriptPath -DCvmName DC01 -CAvmName CA01 -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"
+                Invoke-Expression "$ScriptPath -DCvmName $($using:DCvmName) -CAvmName $($using:CAvmName) -CAName $($using:CAName) -CDPURL $($using:CDPURL) -WebenrollURL $($using:WebenrollURL) -demoCertDNSName $($using:demoCertDNSName)"
 
             }            
         }
