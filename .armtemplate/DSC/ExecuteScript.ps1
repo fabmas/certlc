@@ -50,6 +50,13 @@ configuration ExecuteScript
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
     
+        WindowsFeature 'RSAT-AD-PowerShell'
+        {
+            Name                 = 'RSAT-AD-PowerShell'
+            Ensure               = 'Present'
+            IncludeAllSubFeature = $true 
+        }
+
         script 'ExecuteScript'
         {
             PsDscRunAsCredential = $DomainCreds

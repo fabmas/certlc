@@ -22,13 +22,8 @@ Param
 
 #region modules
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-
-Add-WindowsFeature RSAT-AD-PowerShell
 Import-Module ActiveDirectory -Force
- 
-#Install-Module ADCSTemplate -Force
 Import-Module ADCSTemplate -Force
-
 #end region modules
 
 
