@@ -25,68 +25,11 @@ configuration ExecuteScript
         [String]$demoCertDNSName
     )
 
-    Import-DscResource -ModuleName xActiveDirectory, PSDesiredStateConfiguration, PackageManagement
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
-
-
     
     Node localhost
     {
   
-        PackageManagementSource PSGallery
-        {
-            Ensure              = "Present"
-            Name                = "PSGallery"
-            ProviderName        = "PowerShellGet"
-            SourceLocation      = "https://www.powershellgallery.com/api/v2"
-            InstallationPolicy  = "Trusted"
-        }
-    
-        PackageManagement PSModuleADCSTemplate
-        {
-            Ensure               = "Present"
-            Name                 = "ADCSTemplate"
-            Source               = "PSGallery"
-            DependsOn            = "[PackageManagementSource]PSGallery"
-        }
-    
-        
-        PackageManagement PSModuleActiveDirectory
-        {
-            Ensure               = "Present"
-            Name                 = "ActiveDirectory"
-            Source               = "PSGallery"
-            DependsOn            = "[PackageManagementSource]PSGallery"
-        }
-    
-    
-        WindowsFeature 'RSAT-AD-PowerShell'
-        {
-            Name                 = 'RSAT-AD-PowerShell'
-            Ensure               = 'Present'
-            IncludeAllSubFeature = $true 
-        }
-    
-        WindowsFeature 'ADCS-Cert-Authority'
-        {
-            Name                 = 'ADCS-Cert-Authority'
-            Ensure               = 'Present'
-            IncludeAllSubFeature = $true 
-        }
-    
-        WindowsFeature 'ADCS-Enroll-Web-Pol'
-        {
-            Name                 = 'ADCS-Enroll-Web-Pol'
-            Ensure               = 'Present'
-            IncludeAllSubFeature = $true 
-        }
-    
-        WindowsFeature 'ADCS-Enroll-Web-Svc'
-        {
-            Name                 = 'ADCS-Enroll-Web-Svc'
-            Ensure               = 'Present'
-            IncludeAllSubFeature = $true 
-        }
     
         script 'ExecuteScript'
         {
@@ -104,7 +47,15 @@ configuration ExecuteScript
                 Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
 
                 # then run the following command to execute the script
-                Start-Process -FilePath "powershell.exe " -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
+                #Start-Process -FilePath "powershell.exe " -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
+
+                $a = @()
+                $a += ("-CAName", $CAName)
+                $a += ("-CDPURL", $CDPURL)
+                $a += ("-WebenrollURL", $WebenrollURL)
+                $a += ("-demoCertDNSName", $demoCertDNSName)
+
+                Invoke-Expression "$ScriptPath $a"
 
                 #Invoke-Command -ComputerName $env:COMPUTERNAME -FilePath $ScriptPath -Credential $SecureCreds -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
 
@@ -112,7 +63,7 @@ configuration ExecuteScript
             }            
         }
     
-    } #//CHIUSURA NODE LOCALHOST
+    } 
 
 
 }
