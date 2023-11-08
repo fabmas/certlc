@@ -361,6 +361,9 @@
             "apiVersion": "2021-03-01",
             "name": "[parameters('CAvmName')]",
             "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "hardwareProfile": {
                 "vmSize": "[parameters('CAvmSize')]"
@@ -400,6 +403,7 @@
                     ]
                 }
             },
+            "licenseType": "Windows_Server",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('CAnicName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('DCvmName'))]",
@@ -447,7 +451,7 @@
                 "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "ModulesUrl": "[uri(parameters('_artifactsLocation'), concat('DSC/ExecuteScript.ps1', parameters('_artifactsLocationSasToken')))]",
+                    "ModulesUrl": "[uri(parameters('_artifactsLocation'), concat('DSC/ExecuteScript.zip', parameters('_artifactsLocationSasToken')))]",
                     "ConfigurationFunction": "ExecuteScript.ps1\\ExecuteScript",
                     "Properties": {
                         "DomainName": "[parameters('DomainName')]",
