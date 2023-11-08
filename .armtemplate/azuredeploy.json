@@ -422,7 +422,12 @@
                                 "AdminCreds": {
                                     "UserName": "[parameters('DomainAdminUsername')]",
                                     "Password": "PrivateSettingsRef:AdminPassword"
-                                }
+                                },
+                                "DCvmName": "[parameters('DCvmName')]",
+                                "CAName": "DEMOCA",
+                                "CDPURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
+                                "WebenrollURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
+                                "demoCertDNSName": "[concat('democert.',parameters('DomainName'))]"
                             }
                         },
                         "protectedSettings": {
