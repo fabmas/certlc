@@ -26,10 +26,13 @@ configuration ExecuteScript
 
         [Parameter(Mandatory=$true)]
         [String]$demoCertDNSName
+
+        [Int]$RetryCount=20,
+        [Int]$RetryIntervalSec=30
     )
     Import-DscResource -ModuleName xComputerManagement, xActiveDirectory,PSDesiredStateConfiguration, PackageManagement
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
-    
+
     Node localhost
     {
   
