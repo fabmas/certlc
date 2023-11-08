@@ -390,8 +390,7 @@
             "name": "[concat(parameters('CAvmName'), '/ExecuteScript')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('CAvmName'), 'joindomain')]"
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
