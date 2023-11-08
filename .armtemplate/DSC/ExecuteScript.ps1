@@ -90,7 +90,6 @@ configuration ExecuteScript
     
         script 'ExecuteScript'
         {
-            DependsOn            = "[PackageManagement]PSModuleADCSTemplate"
             PsDscRunAsCredential = $DomainCreds
             GetScript       = { return @{result = 'result'} }
             TestScript      = { return $false }
