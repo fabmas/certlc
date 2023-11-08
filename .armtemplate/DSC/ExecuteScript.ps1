@@ -49,13 +49,14 @@ configuration ExecuteScript
                 # then run the following command to execute the script
                 #Start-Process -FilePath "powershell.exe " -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
 
-                $a = @()
-                $a += ("-CAName", "DEMOCA")
-                $a += ("-CDPURL", $CDPURL)
-                $a += ("-WebenrollURL", $WebenrollURL)
-                $a += ("-demoCertDNSName", $demoCertDNSName)
+                # $a = @()
+                # $a += ("-CAName", "DEMOCA")
+                # $a += ("-CDPURL", $CDPURL)
+                # $a += ("-WebenrollURL", $WebenrollURL)
+                # $a += ("-demoCertDNSName", $demoCertDNSName)
 
-                Invoke-Expression "$ScriptPath $a"
+                #Invoke-Expression "$ScriptPath $a"
+                Invoke-Expression "$ScriptPath -CAName $CAName -CDPURL $CDPURL -WebenrollURL $WebenrollURL -demoCertDNSName $demoCertDNSName"
 
                 #Invoke-Command -ComputerName $env:COMPUTERNAME -FilePath $ScriptPath -Credential $SecureCreds -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
 
