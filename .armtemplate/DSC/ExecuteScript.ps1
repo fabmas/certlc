@@ -25,7 +25,7 @@ configuration ExecuteScript
         [String]$WebenrollURL,
 
         [Parameter(Mandatory=$true)]
-        [String]$demoCertDNSName
+        [String]$demoCertDNSName,
 
         [Int]$RetryCount=20,
         [Int]$RetryIntervalSec=30
