@@ -1,16 +1,24 @@
 Param 
 (
-
+    [Parameter(Mandatory=$true, Position=0)]
+    [String]$DomainAdminName,
+ 
     [Parameter(Mandatory=$true, Position=1)]
+    [String]$DomainAdminPWD,
+
+    [Parameter(Mandatory=$true, Position=2)]
+    [String]$DCvmName,
+
+    [Parameter(Mandatory=$true, Position=3)]
     [String]$CAName,
  
-    [Parameter(Mandatory=$true, Position=2)]
+    [Parameter(Mandatory=$true, Position=4)]
     [String]$CDPURL,
  
-    [Parameter(Mandatory=$true, Position=3)]
+    [Parameter(Mandatory=$true, Position=5)]
     [String]$WebenrollURL,
 
-    [Parameter(Mandatory=$true, Position=4)]
+    [Parameter(Mandatory=$true, Position=6)]
     [String]$demoCertDNSName
 )
 
@@ -97,6 +105,14 @@ AlternateSignatureAlgorithm=1
 Critical = 2.5.29.15
 "@ | Out-File C:\Windows\capolicy.inf -Force
  
+if ($DomainAdminName -like "*@*") {
+    $parts = $DomainAdminName -split "@"
+    $DomainAdminName = $parts[1] + "\" + $parts[0]
+}
+
+$SecureString = ConvertTo-SecureString -AsPlainText $DomainAdminPWD -Force
+$SecureCreds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $DomainAdminName,$SecureString 
+
 Install-AdcsCertificationAuthority -CACommonName $CAName `
                                    -CAType EnterpriseRootCA `
                                    -CADistinguishedNameSuffix 'O=DEMO,C=IT' `
@@ -105,6 +121,7 @@ Install-AdcsCertificationAuthority -CACommonName $CAName `
                                    -ValidityPeriodUnits 10 `
                                    -CryptoProviderName 'RSA#Microsoft Software Key Storage Provider' `
                                    -KeyLength 4096 `
+                                   -Credential $SecureCreds `
                                    -Force
                                    
 
@@ -139,7 +156,7 @@ certutil -CRL
 #endregion restart CA service and publish CRL
  
 #region add webserver template
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
+Invoke-Command -ComputerName $DCvmName -Credential $SecureCreds -ScriptBlock {
     $DN = (Get-ADDomain).DistinguishedName
     $WebTemplate = "CN=WebServer,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$DN"
     DSACLS $WebTemplate /G "Authenticated Users:CA;Enroll"
@@ -160,7 +177,7 @@ Install-AdcsEnrollmentWebService -AuthenticationType UserName -SSLCertThumbprint
 #endregion Install enrollment web services
  
 #region modify Enrollment Server URL in AD
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
+Invoke-Command -ComputerName $DCvmName -Credential $SecureCreds -ScriptBlock {
     param
     (
         $CAName,
