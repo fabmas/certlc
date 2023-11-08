@@ -1,1 +1,1 @@
-{"Modules":["xActiveDirectory","PackageManagement"]}
+{"Modules":["xComputerManagement","xActiveDirectory","PackageManagement"]}

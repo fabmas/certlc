@@ -27,7 +27,7 @@ configuration ExecuteScript
         [Parameter(Mandatory=$true)]
         [String]$demoCertDNSName
     )
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, PackageManagement
+    Import-DscResource -ModuleName xComputerManagement, xActiveDirectory,PSDesiredStateConfiguration, PackageManagement
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
     
     Node localhost
@@ -50,15 +50,32 @@ configuration ExecuteScript
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
     
-        WindowsFeature 'RSAT-AD-PowerShell'
+        WindowsFeature ADPS
         {
-            Name                 = 'RSAT-AD-PowerShell'
-            Ensure               = 'Present'
-            IncludeAllSubFeature = $true 
+            Name        = "RSAT-AD-PowerShell"
+            Ensure      = "Present"
+        }
+
+        xWaitForADDomain DscForestWait 
+        { 
+            DomainName           = $DomainName 
+            DomainUserCredential = $DomainCreds
+            RetryCount           = $RetryCount 
+            RetryIntervalSec     = $RetryIntervalSec 
+            DependsOn            = "[WindowsFeature]ADPS"
+        }
+        
+        xComputer DomainJoin
+        {
+            Name        = $env:COMPUTERNAME
+            DomainName  = $DomainName
+            Credential  = $DomainCreds
+            DependsOn   = "[xWaitForADDomain]DscForestWait"
         }
 
         script 'ExecuteScript'
         {
+            DependsOn            = "[xComputer]DomainJoin"
             PsDscRunAsCredential = $DomainCreds
             GetScript       = { return @{result = 'result'} }
             TestScript      = { return $false }

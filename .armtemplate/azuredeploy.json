@@ -382,32 +382,8 @@
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('DCvmName'), 'CreateADForest')]",
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
             ]
-            },
-            {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "apiVersion": "2021-03-01",
-            "name": "[format('{0}/{1}', parameters('CAvmName'), 'joindomain')]",
-            "location": "[parameters('location')]",
-            "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "JsonADDomainExtension",
-                "typeHandlerVersion": "1.3",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                "name": "[parameters('domainName')]",
-                "ouPath": "",
-                "user": "[format('{0}\\{1}', parameters('domainName'), parameters('DomainAdminUsername'))]",
-                "restart": true,
-                "options": "3"
-                },
-                "protectedSettings": {
-                "Password": "[parameters('DomainAdminPassword')]"
-                }
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
-            ]
         },
+            
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2022-03-01",
