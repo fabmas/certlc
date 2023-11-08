@@ -1,6 +1,9 @@
 Param 
 (
 
+    [Parameter(Mandatory=$true, Position=0)]
+    [String]$DCvmName,
+
     [Parameter(Mandatory=$true, Position=1)]
     [String]$CAName,
  
@@ -139,7 +142,7 @@ certutil -CRL
 #endregion restart CA service and publish CRL
  
 #region add webserver template
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
+Invoke-Command -ComputerName $DCvmName -ScriptBlock {
     $DN = (Get-ADDomain).DistinguishedName
     $WebTemplate = "CN=WebServer,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$DN"
     DSACLS $WebTemplate /G "Authenticated Users:CA;Enroll"
@@ -160,7 +163,7 @@ Install-AdcsEnrollmentWebService -AuthenticationType UserName -SSLCertThumbprint
 #endregion Install enrollment web services
  
 #region modify Enrollment Server URL in AD
-Invoke-Command -ComputerName ($env:LOGONSERVER).Trim("\") -ScriptBlock {
+Invoke-Command -ComputerName $DCvmName -ScriptBlock {
     param
     (
         $CAName,

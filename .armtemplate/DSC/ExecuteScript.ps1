@@ -56,7 +56,7 @@ configuration ExecuteScript
                 # $a += ("-demoCertDNSName", $demoCertDNSName)
 
                 #Invoke-Expression "$ScriptPath $a"
-                Invoke-Expression "$ScriptPath -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"
+                Invoke-Expression "$ScriptPath -DCvmName DC01 -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"
 
                 #Invoke-Command -ComputerName $env:COMPUTERNAME -FilePath $ScriptPath -Credential $SecureCreds -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
 
