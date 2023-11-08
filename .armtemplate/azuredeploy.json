@@ -128,8 +128,6 @@
         },
 
 
-
-
         "_CurrentDateTimeInTicks": {
             "metadata": {
                 "description": "Current date time in ticks used for unique variables"
@@ -140,10 +138,11 @@
     
     },
     "variables": {
+        "UniqueStringBasedOnTimeStamp": "[uniqueString(deployment().name, parameters('_CurrentDateTimeInTicks'))]",
         "DCnicName": "[concat(parameters('DCvmName'),'-nic')]",
         "DCpublicIPAddressName": "[concat(parameters('DCvmName'),'-ip')]",
-        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]",
-        "UniqueStringBasedOnTimeStamp": "[uniqueString(deployment().name, parameters('_CurrentDateTimeInTicks'))]"
+        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]"
+       
     },
     "resources": [
         {
@@ -524,7 +523,7 @@
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2022-08-08",
             "name": "[parameters('AutomationAccountName')]",
-            "location": "[parameters('Location')]",
+            "location": "[parameters('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },
@@ -571,7 +570,7 @@
             "type": "Microsoft.Automation/automationAccounts/runbooks",
             "apiVersion": "2022-08-08",
             "name": "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]",
-            "location": "[parameters('Location')]",
+            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
@@ -593,7 +592,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('CAvmName'),'/HybridWorkerExtension')]",
             "apiVersion": "2022-03-01",
-            "location": "[parameters('Location')]",
+            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
