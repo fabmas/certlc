@@ -28,65 +28,66 @@ configuration ExecuteScript
     Import-DscResource -ModuleName xActiveDirectory, PSDesiredStateConfiguration, PackageManagement
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
-    PackageManagementSource PSGallery
-    {
-        Ensure              = "Present"
-        Name                = "PSGallery"
-        ProviderName        = "PowerShellGet"
-        SourceLocation      = "https://www.powershellgallery.com/api/v2"
-        InstallationPolicy  = "Trusted"
-    }
-
-    PackageManagement PSModuleADCSTemplate
-    {
-        Ensure               = "Present"
-        Name                 = "ADCSTemplate"
-        Source               = "PSGallery"
-        DependsOn            = "[PackageManagementSource]PSGallery"
-    }
-
-    
-    PackageManagement PSModuleActiveDirectory
-    {
-        Ensure               = "Present"
-        Name                 = "ActiveDirectory"
-        Source               = "PSGallery"
-        DependsOn            = "[PackageManagementSource]PSGallery"
-    }
-
-
-    WindowsFeature 'RSAT-AD-PowerShell'
-    {
-        Name                 = 'RSAT-AD-PowerShell'
-        Ensure               = 'Present'
-        IncludeAllSubFeature = $true 
-    }
-
-    WindowsFeature 'ADCS-Cert-Authority'
-    {
-        Name                 = 'ADCS-Cert-Authority'
-        Ensure               = 'Present'
-        IncludeAllSubFeature = $true 
-    }
-
-    WindowsFeature 'ADCS-Enroll-Web-Pol'
-    {
-        Name                 = 'ADCS-Enroll-Web-Pol'
-        Ensure               = 'Present'
-        IncludeAllSubFeature = $true 
-    }
-
-    WindowsFeature 'ADCS-Enroll-Web-Svc'
-    {
-        Name                 = 'ADCS-Enroll-Web-Svc'
-        Ensure               = 'Present'
-        IncludeAllSubFeature = $true 
-    }
 
     
     Node localhost
     {
   
+        PackageManagementSource PSGallery
+        {
+            Ensure              = "Present"
+            Name                = "PSGallery"
+            ProviderName        = "PowerShellGet"
+            SourceLocation      = "https://www.powershellgallery.com/api/v2"
+            InstallationPolicy  = "Trusted"
+        }
+    
+        PackageManagement PSModuleADCSTemplate
+        {
+            Ensure               = "Present"
+            Name                 = "ADCSTemplate"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
+    
+        
+        PackageManagement PSModuleActiveDirectory
+        {
+            Ensure               = "Present"
+            Name                 = "ActiveDirectory"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
+    
+    
+        WindowsFeature 'RSAT-AD-PowerShell'
+        {
+            Name                 = 'RSAT-AD-PowerShell'
+            Ensure               = 'Present'
+            IncludeAllSubFeature = $true 
+        }
+    
+        WindowsFeature 'ADCS-Cert-Authority'
+        {
+            Name                 = 'ADCS-Cert-Authority'
+            Ensure               = 'Present'
+            IncludeAllSubFeature = $true 
+        }
+    
+        WindowsFeature 'ADCS-Enroll-Web-Pol'
+        {
+            Name                 = 'ADCS-Enroll-Web-Pol'
+            Ensure               = 'Present'
+            IncludeAllSubFeature = $true 
+        }
+    
+        WindowsFeature 'ADCS-Enroll-Web-Svc'
+        {
+            Name                 = 'ADCS-Enroll-Web-Svc'
+            Ensure               = 'Present'
+            IncludeAllSubFeature = $true 
+        }
+    
         script 'ExecuteScript'
         {
             DependsOn            = "[PackageManagement]PSModuleADCSTemplate"
