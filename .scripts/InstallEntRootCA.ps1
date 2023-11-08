@@ -236,7 +236,7 @@ $TemplateJSON = '{
 }'
 
 
-$WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $TemplateJSON -Identity "demo.local\$($CAvmName)$" -Publish
+$WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $TemplateJSON -Publish
 
 #endregion create and publish WebServerShort certificate template
 
