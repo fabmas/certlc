@@ -241,5 +241,5 @@ $WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $Templa
 #endregion create and publish WebServerShort certificate template
 
 #region request Web Server Short certificate
-#$cert = Get-Certificate -Template webservershort -DnsName $demoCertDNSName -SubjectName "CN=democert" -CertStoreLocation cert:\LocalMachine\My
+$cert = Get-Certificate -Template webservershort -DnsName $demoCertDNSName -SubjectName "CN=democert" -CertStoreLocation cert:\LocalMachine\My
 #endregion request Web Server Short certificate
