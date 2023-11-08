@@ -19,6 +19,8 @@ Param
 
 #region modules
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted 
+Install-Module -Name PowerShellGet -Force
 
 Add-WindowsFeature RSAT-AD-PowerShell
 Import-Module ActiveDirectory -Force
