@@ -61,7 +61,6 @@ configuration ExecuteScript
 
         script 'ExecuteScript'
         {
-            DependsOn            = "[xComputer]DomainJoin"
             PsDscRunAsCredential = $DomainCreds
             GetScript       = { return @{result = 'result'} }
             TestScript      = { return $false }
