@@ -46,7 +46,7 @@ configuration ExecuteScript
                 Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
 
                 # then run the following command to execute the script
-                Start-Process -FilePath "powershell.exe " -Credential $DomainCreds -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
+                Start-Process -FilePath "powershell.exe " -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
 
                 #Invoke-Command -ComputerName $env:COMPUTERNAME -FilePath $ScriptPath -Credential $SecureCreds -ArgumentList $CAName,$CDPURL,$WebenrollURL,$demoCertDNSName -Verbose
 
