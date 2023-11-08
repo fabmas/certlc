@@ -50,7 +50,7 @@ configuration ExecuteScript
                 #Start-Process -FilePath "powershell.exe " -ArgumentList "-File $ScriptPath $CAName $CDPURL $WebenrollURL $demoCertDNSName" -Verbose
 
                 $a = @()
-                $a += ("-CAName", $CAName)
+                $a += ("-CAName", "DEMOCA")
                 $a += ("-CDPURL", $CDPURL)
                 $a += ("-WebenrollURL", $WebenrollURL)
                 $a += ("-demoCertDNSName", $demoCertDNSName)
