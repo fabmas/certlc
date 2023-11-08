@@ -432,6 +432,7 @@
                             "Password": "PrivateSettingsRef:AdminPassword"
                         },
                         "DCvmName": "[parameters('DCvmName')]",
+                        "CAvmName": "[parameters('CAvmName')]",
                         "CAName": "DEMOCA",
                         "CDPURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
                         "WebenrollURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",

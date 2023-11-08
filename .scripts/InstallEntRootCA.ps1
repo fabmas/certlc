@@ -6,6 +6,9 @@ Param
 
     [Parameter(Mandatory=$true, Position=1)]
     [String]$CAName,
+
+    [Parameter(Mandatory=$true)]
+    [String]$CAvmName,
  
     [Parameter(Mandatory=$true, Position=2)]
     [String]$CDPURL,
@@ -176,8 +179,6 @@ Invoke-Command -ComputerName $DCvmName -ScriptBlock {
 #endregion modify Enrollment Server URL in AD
 
 #region create and publish WebServerShort certificate template
-#Install-Module ADCSTemplate -Force
-Import-Module ADCSTemplate -Force
 
 $TemplateJSON = '{
     "name":  "TemporaryTemplate",
@@ -235,7 +236,7 @@ $TemplateJSON = '{
 }'
 
 
-$WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $TemplateJSON -Identity "$((Get-ADDomain).NetBIOSName)\$($env:computername)$" -Publish
+$WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $TemplateJSON -Identity "$((Get-ADDomain).NetBIOSName)\$($CAvmName)$" -Publish
 
 #endregion create and publish WebServerShort certificate template
 
