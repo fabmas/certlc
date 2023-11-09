@@ -1,23 +1,26 @@
 Param 
 (
 
-    [Parameter(Mandatory=$true, Position=0)]
+    [Parameter(Mandatory=$true)]
     [String]$DCvmName,
 
-    [Parameter(Mandatory=$true, Position=1)]
+    [Parameter(Mandatory=$true)]
     [String]$CAName,
 
     [Parameter(Mandatory=$true)]
     [String]$CAvmName,
  
-    [Parameter(Mandatory=$true, Position=2)]
+    [Parameter(Mandatory=$true)]
     [String]$CDPURL,
  
-    [Parameter(Mandatory=$true, Position=3)]
+    [Parameter(Mandatory=$true)]
     [String]$WebenrollURL,
 
-    [Parameter(Mandatory=$true, Position=4)]
-    [String]$demoCertDNSName
+    [Parameter(Mandatory=$true)]
+    [String]$demoCertDNSName,
+
+    [Parameter(Mandatory=$true)]
+    [String]$keyVaultName
 )
 
 #region modules
@@ -71,12 +74,7 @@ catch
     Write-Verbose 'A CA is already installed on this server, cleanup server and AD before running this script again' -Verbose
     break
 }
-#if ((certutil -adca |Select-String "cn =").line.Substring(7) -contains $CAName)
-#{
-#    Write-Verbose "An Enterprise CA with the CA Name $CAName already exists" -Verbose
-#    break
-#}
- 
+
  
 New-Item C:\Windows\capolicy.inf -ItemType file -Force | Out-Null
 @"
@@ -238,3 +236,19 @@ $WebServerShort = New-ADCSTemplate -DisplayName "Web Server Short" -JSON $Templa
 #region request Web Server Short certificate
 $cert = Get-Certificate -Template webservershort -DnsName $demoCertDNSName -SubjectName "CN=democert" -CertStoreLocation cert:\LocalMachine\My
 #endregion request Web Server Short certificate
+
+#region export the PFX certificate to the keyvault
+
+$pfxFilePath = "C:\Temp\Script\democert.pfx"
+$certificateName = "democert"
+$pfxPassword = ConvertTo-SecureString -String "PFXPasswordDEMO" -Force -AsPlainText
+
+# Export certificate to PFX
+Get-ChildItem -Path  "cert:\localMachine\my\$($cert.Certificate.Thumbprint)" | Export-PfxCertificate -FilePath $pfxFilePath -Password $pfxPassword
+
+Connect-AzAccount -Identity
+
+# Import the certificate into Azure KeyVault
+Import-AzKeyVaultCertificate -VaultName $keyVaultName -Name $certificateName -FilePath $pfxFilePath -Password $pfxPassword
+
+#endregion export the PFX certificate to the keyvault

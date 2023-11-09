@@ -25,7 +25,10 @@ configuration ExecuteScript
         [String]$WebenrollURL,
 
         [Parameter(Mandatory=$true)]
-        [String]$demoCertDNSName
+        [String]$demoCertDNSName,
+
+        [Parameter(Mandatory=$true)]
+        [String]$keyVaultName
 
     )
     Import-DscResource -ModuleName PSDesiredStateConfiguration, PackageManagement
@@ -43,6 +46,42 @@ configuration ExecuteScript
             InstallationPolicy  = "Trusted"
         }
 
+        PackageManagement PSModuleAzAccounts
+        {
+            Ensure               = "Present"
+            Name                 = "Az.Accounts"
+            Version              = "2.12.1"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
+    
+        PackageManagement PSModuleAzResources
+        {
+            Ensure               = "Present"
+            Name                 = "Az.Resources"
+            Version              = "6.6.0"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
+
+        PackageManagement PSModuleAzCompute
+        {
+            Ensure               = "Present"
+            Name                 = "Az.Compute"
+            Version              = "5.7.0"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
+
+        PackageManagement PSModuleAzKeyVault
+        {
+            Ensure               = "Present"
+            Name                 = "Az.KeyVault"
+            Version              = "4.9.2"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
+
         PackageManagement PSModuleADCSTemplate
         {
             Ensure               = "Present"
@@ -50,7 +89,15 @@ configuration ExecuteScript
             Source               = "PSGallery"
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
-    
+
+        PackageManagement PSModulePSPKI
+        {
+            Ensure               = "Present"
+            Name                 = "PSPKI"
+            Source               = "PSGallery"
+            DependsOn            = "[PackageManagementSource]PSGallery"
+        }
+
         WindowsFeature ADPS
         {
             Name        = "RSAT-AD-PowerShell"
@@ -75,7 +122,7 @@ configuration ExecuteScript
                 # then run the following command to execute the script
 
                 #Invoke-Expression "$ScriptPath -DCvmName DC01 -CAvmName CA01 -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"
-                Invoke-Expression "$ScriptPath -DCvmName $($using:DCvmName) -CAvmName $($using:CAvmName) -CAName $($using:CAName) -CDPURL $($using:CDPURL) -WebenrollURL $($using:WebenrollURL) -demoCertDNSName $($using:demoCertDNSName)"
+                Invoke-Expression "$ScriptPath -DCvmName $($using:DCvmName) -CAvmName $($using:CAvmName) -CAName $($using:CAName) -CDPURL $($using:CDPURL) -WebenrollURL $($using:WebenrollURL) -demoCertDNSName $($using:demoCertDNSName) -keyVaultName $($using:keyVaultName)"
 
             }            
         }
