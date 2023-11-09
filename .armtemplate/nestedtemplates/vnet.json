@@ -62,7 +62,18 @@
           {
             "name": "[parameters('subnetName')]",
             "properties": {
-              "addressPrefix": "[parameters('subnetRange')]"
+              "serviceEndpoints": [
+                  {
+                      "service": "Microsoft.KeyVault",
+                      "locations": [
+                          "[parameters('location')]"
+                      ]
+                  }
+              ],
+              "addressPrefix": "[parameters('subnetRange')]",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
             }
           }
         ]
