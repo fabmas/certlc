@@ -50,7 +50,8 @@ configuration ExecuteScript
         {
             Ensure               = "Present"
             Name                 = "Az.Accounts"
-            Version              = "2.12.1"
+            MaximumVersion       = "2.12.1"
+            MinimumVersion       = "2.12.1"
             Source               = "PSGallery"
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
@@ -59,7 +60,8 @@ configuration ExecuteScript
         {
             Ensure               = "Present"
             Name                 = "Az.Resources"
-            Version              = "6.6.0"
+            MaximumVersion       = "6.6.0"
+            MinimumVersion       = "6.6.0"
             Source               = "PSGallery"
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
@@ -68,7 +70,8 @@ configuration ExecuteScript
         {
             Ensure               = "Present"
             Name                 = "Az.Compute"
-            Version              = "5.7.0"
+            MaximumVersion        = "5.7.0"
+            MinimumVersion        = "5.7.0"
             Source               = "PSGallery"
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
@@ -77,7 +80,8 @@ configuration ExecuteScript
         {
             Ensure               = "Present"
             Name                 = "Az.KeyVault"
-            Version              = "4.9.2"
+            MaximumVersion       = "4.9.2"
+            MinimumVersion       = "4.9.2"
             Source               = "PSGallery"
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
