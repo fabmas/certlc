@@ -617,7 +617,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[guid('CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
+            "name": "[guid('AA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -633,7 +633,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[guid('CryptoOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
+            "name": "[guid('CA-CryptoOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -649,7 +649,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[guid('CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
+            "name": "[guid('CA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -665,7 +665,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[guid('SecretUsersOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
+            "name": "[guid('DC-SecretUsersOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
