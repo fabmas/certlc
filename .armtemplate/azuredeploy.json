@@ -485,8 +485,7 @@
             "name": "[parameters('KeyvaultName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+                "VNet"
             ],
             "properties": {
                 "sku": {
