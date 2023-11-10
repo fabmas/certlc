@@ -678,7 +678,7 @@
             "type": "Microsoft.EventGrid/systemTopics",
             "apiVersion": "2023-06-01-preview",
             "name": "[parameters('EventGridName')]",
-            "location": "westeurope",
+            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]"
             ],
