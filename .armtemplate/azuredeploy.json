@@ -147,7 +147,7 @@
 
         "WebhookExpiryTime": {
             "type": "string",
-            "defaultValue": "[add(utcNow(), '365.00:00:00')]",
+            "defaultValue": "[dateTimeAdd(utcNow('u'), 'P1Y')]",
             "metadata": {
                 "description": "The expiry time for the webhook. Default is 365 days from now."
             }
