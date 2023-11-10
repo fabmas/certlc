@@ -140,7 +140,7 @@
             "metadata": {
                 "description": "Name of the Hybrid Runbook Worker Group"
             },
-            "defaultValue": "SubordinateCA",
+            "defaultValue": "EnterpriseRootCA",
             "type": "string"
         },
 
