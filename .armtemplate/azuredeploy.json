@@ -530,7 +530,6 @@
                 "enableSoftDelete": true,
                 "softDeleteRetentionInDays": 90,
                 "enableRbacAuthorization": true,
-                "enablePurgeProtection": false,
                 "vaultUri": "[concat(concat('https://',parameters('KeyvaultName')),'.vault.azure.net/')]",
                 "publicNetworkAccess": "Enabled"
             }
