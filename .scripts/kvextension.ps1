@@ -74,6 +74,12 @@ $extType = "KeyVaultForLinux"
 New-AzConnectedMachineExtension -ResourceGroupName "pvtest"-MachineName "angelo-VM" -Name "KeyVaultForLinux" -Location "italynorth" -Publisher "Microsoft.Azure.KeyVault" -ExtensionType "KeyVaultForLinux" -Setting $Settings
 
 
+
+
+
+
+
+
 ################################
 #Test webhook
 $body = '[{
@@ -83,9 +89,9 @@ $body = '[{
     "eventType": "Microsoft.KeyVault.CertificateNearExpiry",
     "data": {
       "Id": "https://certlc-kv01.vault.azure.net/certificates/pippo/f01a4ce4aca8467aa8c87046936089e3",
-      "VaultName": "certlc-kv01",
+      "VaultName": "fabmas-DEMO-KV-05",
       "ObjectType": "Certificate",
-      "ObjectName": "pippo",
+      "ObjectName": "democert",
       "Version": "f01a4ce4aca8467aa8c87046936089e3",
       "NBF": 1697808670,
       "EXP": 1698154270
@@ -98,8 +104,8 @@ $Headers.Add('aeg-delivery-count', '0')
 $Headers.Add('aeg-data-version', '1')
 $Headers.Add('aeg-metadata-version', '0')
 $Headers.Add('aeg-event-type', 'Notification')
-$Headers.Add('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjlHbW55RlBraGMzaE91UjIybXZTdmduTG83WSIsImtpZCI6IjlHbW55RlBraGMzaE91UjIybXZTdmduTG83WSJ9.eyJhdWQiOiI0ZDU3ZmI2Yi03NWZmLTRlNzUtYjJmMS1iNzc4ODY4NWYzODMiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8xOTEyMTU4Zi03MTJmLTQwMGUtODE5ZC04NDk4YjFhZDZmODUvIiwiaWF0IjoxNjk4MDc4OTg1LCJuYmYiOjE2OTgwNzg5ODUsImV4cCI6MTY5ODE2NTY4NSwiYWlvIjoiRTJGZ1lNaTYrN1V2MjlVaG16WHhkYUpWZ2MwSkFBPT0iLCJhcHBpZCI6IjQ5NjI3NzNiLTljZGItNDRjZi1hOGJmLTIzNzg0NmEwMGFiNyIsImFwcGlkYWNyIjoiMiIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzE5MTIxNThmLTcxMmYtNDAwZS04MTlkLTg0OThiMWFkNmY4NS8iLCJvaWQiOiJkZjI0N2E5YS1mNjRmLTQzMWEtODczZi1mZmIzNjMzOGI2ODMiLCJyaCI6IjAuQUgwQWp4VVNHUzl4RGtDQm5ZU1lzYTF2aFd2N1YwM19kWFZPc3ZHM2VJYUY4NE9jQUFBLiIsInN1YiI6ImRmMjQ3YTlhLWY2NGYtNDMxYS04NzNmLWZmYjM2MzM4YjY4MyIsInRpZCI6IjE5MTIxNThmLTcxMmYtNDAwZS04MTlkLTg0OThiMWFkNmY4NSIsInV0aSI6IlM5Vk1iQ29PNzBHTUxZdE1la1diQVEiLCJ2ZXIiOiIxLjAifQ.bSZxCU2lHtgVslV6aQl0JRsJdo_yRdHSSL60pGoIExiNhRuRNkUHOCOSYJRDQmWyerkeb7TMfFkmSDY54tDnDYHOymo0W4sYsmDZpGalXyvi7d3JOHEMTHuAAH1ENpQBIadQc87YDNxg8w_N4a3IUv1sZJrp-vxwUoBcdHn3N6hsGcDlSgjLKNVmAfxTUOnBwxZz-m6-aiEKeW5eL1SPsDzcVYw3rbM48FEJ1QDrttHlK9zD_wcCZYRURtHYF-3H8gr0A_MbS7TtXF5KSkuLPfmgwEIUC81ITchv5MShpfK0xh0jANNbIu7c5CTT9jNKqo6BybqIpC9G2VBAnjlgTQ')
-$Headers.Add('Host', '5e314d7b-cfce-415f-aaca-73cf2a963b8c.webhook.we.azure-automation.net')
+#$Headers.Add('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjlHbW55RlBraGMzaE91UjIybXZTdmduTG83WSIsImtpZCI6IjlHbW55RlBraGMzaE91UjIybXZTdmduTG83WSJ9.eyJhdWQiOiI0ZDU3ZmI2Yi03NWZmLTRlNzUtYjJmMS1iNzc4ODY4NWYzODMiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8xOTEyMTU4Zi03MTJmLTQwMGUtODE5ZC04NDk4YjFhZDZmODUvIiwiaWF0IjoxNjk4MDc4OTg1LCJuYmYiOjE2OTgwNzg5ODUsImV4cCI6MTY5ODE2NTY4NSwiYWlvIjoiRTJGZ1lNaTYrN1V2MjlVaG16WHhkYUpWZ2MwSkFBPT0iLCJhcHBpZCI6IjQ5NjI3NzNiLTljZGItNDRjZi1hOGJmLTIzNzg0NmEwMGFiNyIsImFwcGlkYWNyIjoiMiIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzE5MTIxNThmLTcxMmYtNDAwZS04MTlkLTg0OThiMWFkNmY4NS8iLCJvaWQiOiJkZjI0N2E5YS1mNjRmLTQzMWEtODczZi1mZmIzNjMzOGI2ODMiLCJyaCI6IjAuQUgwQWp4VVNHUzl4RGtDQm5ZU1lzYTF2aFd2N1YwM19kWFZPc3ZHM2VJYUY4NE9jQUFBLiIsInN1YiI6ImRmMjQ3YTlhLWY2NGYtNDMxYS04NzNmLWZmYjM2MzM4YjY4MyIsInRpZCI6IjE5MTIxNThmLTcxMmYtNDAwZS04MTlkLTg0OThiMWFkNmY4NSIsInV0aSI6IlM5Vk1iQ29PNzBHTUxZdE1la1diQVEiLCJ2ZXIiOiIxLjAifQ.bSZxCU2lHtgVslV6aQl0JRsJdo_yRdHSSL60pGoIExiNhRuRNkUHOCOSYJRDQmWyerkeb7TMfFkmSDY54tDnDYHOymo0W4sYsmDZpGalXyvi7d3JOHEMTHuAAH1ENpQBIadQc87YDNxg8w_N4a3IUv1sZJrp-vxwUoBcdHn3N6hsGcDlSgjLKNVmAfxTUOnBwxZz-m6-aiEKeW5eL1SPsDzcVYw3rbM48FEJ1QDrttHlK9zD_wcCZYRURtHYF-3H8gr0A_MbS7TtXF5KSkuLPfmgwEIUC81ITchv5MShpfK0xh0jANNbIu7c5CTT9jNKqo6BybqIpC9G2VBAnjlgTQ')
+#$Headers.Add('Host', '5e314d7b-cfce-415f-aaca-73cf2a963b8c.webhook.we.azure-automation.net')
 $Headers.Add('x-ms-request-id', '1cce86be-f112-436b-beee-ae9a051b3116')
 
 

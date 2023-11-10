@@ -833,6 +833,10 @@
         "virtualNetworkAddressPrefixes": {
             "type": "string",
             "value": "[parameters('virtualNetworkAddressRange')]"
+        },
+        "webhookuri": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Automation/automationAccounts/webhooks', parameters('AutomationAccountName'), parameters('webhookName'))).uri]"
         }
     }
 }

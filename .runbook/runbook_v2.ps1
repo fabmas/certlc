@@ -48,7 +48,7 @@ try {
         write-output "IssuerName = $IssuerName"
 
         # GET OID of the Certificate Template
-        try {
+        
             $temp = $cert.Certificate.Extensions | ?{$_.Oid.Value -eq "1.3.6.1.4.1.311.20.2"}
             if (!$temp) {
                 $temp = $cert.Certificate.Extensions | ?{$_.Oid.Value -eq "1.3.6.1.4.1.311.21.7"}
@@ -56,10 +56,6 @@ try {
             $temp = $temp.Format(0)
             $substring = $temp -match '\((.*?)\)' | Out-Null
             $oid= $matches[1]
-        } catch {
-            Write-Error "Error getting OID: $_"
-            throw
-        }
 
         write-output "OID1 = $oid"
 
