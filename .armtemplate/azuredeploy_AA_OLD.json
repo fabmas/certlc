@@ -540,44 +540,33 @@
                     "keySource": "Microsoft.Automation",
                     "identity": {}
                 }
-            }
-        },
-
-        {
-            "type": "Microsoft.Automation/automationAccounts/modules",
-            "apiVersion": "2022-08-08",
-            "name": "[concat(parameters('AutomationAccountName'), '/PSPKI')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
-            ],
-            "properties": {
-                "contentLink": {}
-            }
-        },        
-        
-        {
-            "name": "[parameters('WorkerGroupName')]",
-            "type": "Microsoft.Automation/automationAccounts/hybridRunbookWorkerGroups",
-            "apiVersion": "2022-08-08",
-            "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
-            ],
-            "properties": {
-                "credential": {}
-            }
-        },
-
-        {
-            "name": "[concat(parameters('AutomationAccountName'), '/',parameters('WorkerGroupName'),'/',guid('demohw', variables('UniqueStringBasedOnTimeStamp')))]",
-            "type": "Microsoft.Automation/automationAccounts/hybridRunbookWorkerGroups/hybridRunbookWorkers",
-            "apiVersion": "2022-08-08",
-            "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts/hybridRunbookWorkerGroups', parameters('AutomationAccountName'),parameters('WorkerGroupName'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
-            ],
-            "properties": {
-                "vmResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
-            }
+            },
+            "resources": [
+                {
+                "name": "[parameters('WorkerGroupName')]",
+                "type": "hybridRunbookWorkerGroups",
+                "apiVersion": "2022-02-22",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
+                    "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                ],
+                "resources" : [
+                    {
+                    "name": "[guid('testhw', variables('UniqueStringBasedOnTimeStamp'))]",
+                    "type": "hybridRunbookWorkers",
+                    "apiVersion": "2021-06-22",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/hybridRunbookWorkerGroups', parameters('AutomationAccountName'),parameters('WorkerGroupName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                    ],
+                    "properties": {
+                        "vmResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                    }
+                    }
+                ]
+                }
+            ]
         },
 
         {
@@ -628,7 +617,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/AA-CertificateOfficerOnKeyVault/',guid('AA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[guid('AA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -644,7 +633,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/CA-CryptoOfficerOnKeyVault/',guid('CA-CryptoOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[guid('CA-CryptoOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -660,7 +649,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/CA-CertificateOfficerOnKeyVault/',guid('CA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[guid('CA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -676,7 +665,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/DC-SecretUsersOnKeyVault/',guid('DC-SecretUsersOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[guid('DC-SecretUsersOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
