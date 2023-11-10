@@ -112,13 +112,7 @@
             "type": "String",
             "defaultValue": "DEMO-KV-<UNIQUESTRING>"
         },
-        "LogicAppName": {
-            "metadata": {
-                "description": "UNIQUE name of the Logic App resource"
-            },
-            "type": "String",
-            "defaultValue": "DEMO-LA-<UNIQUESTRING>"
-        },
+
         "EventGridName": {
             "metadata": {
                 "description": "UNIQUE name of the Event Grid resource"
@@ -624,7 +618,7 @@
             "name": "[concat(parameters('AutomationAccountName'), '/webhook')]", 
             "dependsOn": [  
                 "[parameters('automationAccountName')]",  
-                "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]"
+                "[concat(parameters('AutomationAccountName'), 'CertLifeCycleMgmt')]"
             ],  
             "properties": {  
                 "isEnabled": true,  
