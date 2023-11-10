@@ -613,6 +613,7 @@
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
                 "[concat(parameters('CAvmName'), '/ExecuteScript')]"
             ],
+            
             "properties": {
                 "publisher": "Microsoft.Azure.Automation.HybridWorker",
                 "type": "HybridWorkerForWindows",
