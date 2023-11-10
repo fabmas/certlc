@@ -631,7 +631,7 @@
                 "isEnabled": true,  
                 "expiryTime": "[variables('WebhookExpiryTime')]",  
                 "runbook": {  
-                    "name": "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]"  
+                    "name": "CertLifeCycleMgmt"  
                 },
                 "runOn": "[parameters('WorkerGroupName')]"
             }  
