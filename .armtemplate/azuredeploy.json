@@ -112,6 +112,13 @@
             "type": "String",
             "defaultValue": "DEMO-KV-<UNIQUESTRING>"
         },
+        "LogicAppName": {
+            "metadata": {
+                "description": "UNIQUE name of the Logic App resource"
+            },
+            "type": "String",
+            "defaultValue": "DEMO-LA-<UNIQUESTRING>"
+        },
         "EventGridName": {
             "metadata": {
                 "description": "UNIQUE name of the Event Grid resource"
@@ -673,6 +680,108 @@
             }
         },
 
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('LogicAppName')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('AutomationAccountName'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('EventGridName'))]"
+            ],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_resource_event_occurs": {
+                            "splitOn": "@triggerBody()",
+                            "type": "ApiConnectionWebhook",
+                            "inputs": {
+                                "body": {
+                                    "properties": {
+                                        "destination": {
+                                            "endpointType": "webhook",
+                                            "properties": {
+                                                "endpointUrl": "@{listCallbackUrl()}"
+                                            }
+                                        },
+                                        "filter": {
+                                            "includedEventTypes": [
+                                                "Microsoft.KeyVault.CertificateNearExpiry"
+                                            ]
+                                        },
+                                        "topic": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureeventgrid_1']['connectionId']"
+                                    }
+                                },
+                                "path": "/subscriptions/{topicSubscriptionId}/providers/@{encodeURIComponent('Microsoft.KeyVault.vaults')}/resource/eventSubscriptions",
+                                "queries": {
+                                    "x-ms-api-version": "2017-09-15-preview"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Create_job": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "properties": {
+                                        "parameters": {
+                                            "webhookData": "@triggerBody()"
+                                        },
+                                        "runOn": "subordinateca"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureautomation']['connectionId']"
+                                    }
+                                },
+                                "method": "put",
+                                "path": "/subscriptions/@{encodeURIComponent('57fc3aaa-eb52-4521-8be0-09530144173b')}/resourceGroups/@{encodeURIComponent('certlc')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent('certlc-AA01')}/jobs",
+                                "queries": {
+                                    "runbookName": "certificatelifecycle",
+                                    "wait": false,
+                                    "x-ms-api-version": "2015-10-31"
+                                }
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureautomation": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('AutomationAccountName'))]",
+                                "connectionName": "azureautomation",
+                                "id": "/subscriptions/57fc3aaa-eb52-4521-8be0-09530144173b/providers/Microsoft.Web/locations/westeurope/managedApis/azureautomation"
+                            },
+                            "azureeventgrid_1": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('EventGridName'))]",
+                                "connectionName": "azureeventgrid",
+                                "id": "/subscriptions/57fc3aaa-eb52-4521-8be0-09530144173b/providers/Microsoft.Web/locations/westeurope/managedApis/azureeventgrid"
+                            }
+                        }
+                    }
+                }
+            }
+        },
 
         {
             "type": "Microsoft.EventGrid/systemTopics",
@@ -699,9 +808,12 @@
                 "destination": {
                     "properties": {
                         "maxEventsPerBatch": 1,
-                        "preferredBatchSizeInKilobytes": 64
+                        "preferredBatchSizeInKilobytes": 64,
+                        "endpointUrl": "[listCallbackUrl(resourceId('Microsoft.Logic/workflows/triggers', parameters('logicAppName'), 'CertificateNearExpiry'), '2019-05-01').value]"
                     },
                     "endpointType": "WebHook"
+                
+                    
                 },
                 "filter": {
                     "includedEventTypes": [
