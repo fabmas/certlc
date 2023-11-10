@@ -513,17 +513,6 @@
                     "name": "Standard"
                 },
                 "tenantId": "[subscription().tenantId]",
-                "networkAcls": {
-                    "bypass": "AzureServices",
-                    "defaultAction": "Deny",
-                    "ipRules": [],
-                    "virtualNetworkRules": [
-                        {
-                            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/',parameters('subnetName'))]",
-                            "ignoreMissingVnetServiceEndpoint": false
-                        }
-                    ]
-                },
                 "accessPolicies": [],
                 "enabledForDeployment": false,
                 "enabledForDiskEncryption": true,
@@ -533,7 +522,6 @@
                 "enableRbacAuthorization": true,
                 "enablePurgeProtection": true,
                 "vaultUri": "[concat(concat('https://',parameters('KeyvaultName')),'.vault.azure.net/')]",
-                "provisioningState": "Succeeded",
                 "publicNetworkAccess": "Enabled"
             }
         },
