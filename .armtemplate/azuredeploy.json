@@ -634,7 +634,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name":  "[concat(parameters('CAvmName'),'/KeyVaultForWindows')]",
             "apiVersion": "2022-08-01",
-            "location": "<location>",
+            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('CAvmName'), 'HybridWorkerExtension')]"
@@ -665,9 +665,6 @@
                 }
             }
         },
-
-
-
 
 
         {
