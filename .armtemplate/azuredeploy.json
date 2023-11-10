@@ -628,7 +628,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/AA-CertificateOfficerOnKeyVault/',guid('AA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[concat('RBAC-AA-CertificateOfficerOnKeyVault-',guid('AA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -644,7 +644,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/CA-CryptoOfficerOnKeyVault/',guid('CA-CryptoOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[concat('RBAC-CA-CryptoOfficerOnKeyVault-',guid('CA-CryptoOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -660,7 +660,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/CA-CertificateOfficerOnKeyVault/',guid('CA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[concat('RBAC-CA-CertificateOfficerOnKeyVault-',guid('CA-CertificateOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
@@ -676,7 +676,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[concat('RBAC/DC-SecretUsersOnKeyVault/',guid('DC-SecretUsersOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
+            "name": "[concat('RBAC-DC-SecretUsersOnKeyVault-',guid('DC-SecretUsersOnKeyVault', variables('UniqueStringBasedOnTimeStamp')))]",
             "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
