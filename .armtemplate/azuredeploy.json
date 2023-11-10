@@ -551,7 +551,9 @@
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
             ],
             "properties": {
-                "contentLink": {}
+                "contentLink": {
+                    "uri": "https://devopsgallerystorage.blob.core.windows.net:443/packages/pspki.4.0.0.nupkg"
+                }
             }
         },        
         
@@ -563,7 +565,6 @@
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
             ],
             "properties": {
-                "credential": {}
             }
         },
 
