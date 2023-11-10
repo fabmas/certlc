@@ -213,29 +213,7 @@
                 ]
             }
         },
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2021-02-01",
-            "name": "[variables('CAnicName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "VNet",
-                "[variables('DCnicName')]"
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                        "privateIPAllocationMethod": "Dynamic",
-                        "subnet": {
-                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
-                        }
-                        }
-                    }
-                ]
-            }
-        },        
+                
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2023-03-01",
@@ -361,6 +339,29 @@
                         "value": "[parameters('location')]"
                     }
                 }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2021-02-01",
+            "name": "[variables('CAnicName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "VNet",
+                "[variables('DCnicName')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                        "privateIPAllocationMethod": "Dynamic",
+                        "subnet": {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+                        }
+                        }
+                    }
+                ]
             }
         },
         {
@@ -626,6 +627,48 @@
                 }
             }
         },
+
+
+
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name":  "[concat(parameters('CAvmName'),'/KeyVaultForWindows')]",
+            "apiVersion": "2022-08-01",
+            "location": "<location>",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('CAvmName'), 'HybridWorkerExtension')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.KeyVault",
+                "type": "KeyVaultForWindows",
+                "typeHandlerVersion": "3.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "secretsManagementSettings": {
+                        "pollingIntervalInS": "60",
+                        "linkOnRenewal": true,
+                        "observedCertificates": 
+                        [
+                            {
+                                "url":"[concat('https://',parameters('KeyvaultName'),'.vault.azure.net:443/secrets/democert')]",
+                                "certificateStoreName": "MY",
+                                "certificateStoreLocation": "LocalMachine",
+                                "keyExportable": true,
+                                "accounts": [
+                                    "Network Service",
+                                    "Local Service"
+                                ]
+                            }
+                        ]          
+                    }
+                }
+            }
+        },
+
+
+
+
 
         {
             "type": "Microsoft.Authorization/roleAssignments",

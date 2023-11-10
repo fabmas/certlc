@@ -5,7 +5,7 @@
       "observedCertificates":
       [
          {
-            "url": "https://certlc-kv01.vault.azure.net:443/secrets/pippo",
+            "url": "https://fabmas-demo-kv-02.vault.azure.net:443/secrets/democert",
             "certificateStoreName": "MY",
             "certificateStoreLocation": "LocalMachine",
             "keyExportable": true,

@@ -8,9 +8,10 @@
 
 Connect-AzAccount -TenantId 16b3c013-d300-468d-ac64-7eda0820b6d3 -Subscription fabmas-azure
 Connect-AzAccount -TenantId 1912158f-712f-400e-819d-8498b1ad6f85 -Subscription ME-MngEnv999102-angelom-1
+Connect-AzAccount -TenantID 5d64871e-f8ee-48b9-8653-6ac7999b3967 -Subscription vs-famasci
 
 #Prendere il SecretID SENZA LA VERSIONE a partire dal certificato all'interno del keyvault
-Get-AzKeyVaultCertificate -VaultName pv-kv01 -name prova-pfx | select SecretID
+Get-AzKeyVaultCertificate -VaultName "fabmas-DEMO-KV-02" -name democert | select SecretID
 
 #Nel file Json per la configurazione dell'extension specificare il SecretID (es:https://pv-kv01.vault.azure.net:443/secrets/prova-PFX)
 
@@ -22,7 +23,7 @@ $extPublisher = "Microsoft.Azure.KeyVault"
 $extType = "KeyVaultForWindows"
  
 # Start the deployment on Windows VM
-Set-AzVmExtension -TypeHandlerVersion "3.0" -ResourceGroupName "certlc" -Location "westeurope" -VMName "dc01" -Name $extName -Publisher $extPublisher -Type $extType -SettingString $settings
+Set-AzVmExtension -TypeHandlerVersion "3.0" -ResourceGroupName "certlc" -Location "italynorth" -VMName "ca01" -Name $extName -Publisher $extPublisher -Type $extType -SettingString $settings
 
 ##############################
 
