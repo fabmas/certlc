@@ -156,7 +156,7 @@
         "DCnicName": "[concat(parameters('DCvmName'),'-nic')]",
         "DCpublicIPAddressName": "[concat(parameters('DCvmName'),'-ip')]",
         "CAnicName": "[concat(parameters('CAvmName'),'-nic')]",
-        "WebhookExpiryTime": "[add(utcNow(), '365.00:00:00')]"    
+        "WebhookExpiryTime": "2024-11-10T15:40:02.836+00:00"    
     },
     "resources": [
         {
