@@ -624,8 +624,8 @@
             "apiVersion": "2022-08-08",  
             "name": "[concat(parameters('AutomationAccountName'), '/', parameters('webhookName'))]", 
             "dependsOn": [  
-                "[parameters('automationAccountName')]",  
-                "[concat(parameters('AutomationAccountName'), 'CertLifeCycleMgmt')]"
+                "[parameters('automationAccountName')]",
+                "[resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('AutomationAccountName'), 'CertLifeCycleMgmt')]"
             ],  
             "properties": {  
                 "isEnabled": true,  
