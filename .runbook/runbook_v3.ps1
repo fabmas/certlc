@@ -9,7 +9,7 @@ write-output "start"
 write-output $WebhookData
 try {
     if ($WebhookData) {
-        # $body = (ConvertFrom-Json -InputObject $WebhookData)
+        $body = (ConvertFrom-Json -InputObject $WebhookData)
         $body = $WebhookData
 
         # VARIABLE FROM WEBHOOK QUERY
@@ -49,30 +49,24 @@ try {
         write-output "IssuerName = $IssuerName"
 
         # GET OID of the Certificate Template
-        #try {
-            $temp = $cert.Certificate.Extensions | ?{$_.Oid.Value -eq "1.3.6.1.4.1.311.20.2"}
-            if (!$temp) {
-                $temp = $cert.Certificate.Extensions | ?{$_.Oid.Value -eq "1.3.6.1.4.1.311.21.7"}
-            }
-            $temp = $temp.Format(0)
-            write-output $temp
-            $substring = $temp -match '\((.*?)\)' | Out-Null
-            $oid= $matches[1]
-            write-output "OID1 = $oid"
 
-            if ($oid -eq $null) {
-                $split = $temp -split ","
-                $template = $split[0]
-                $templateSplit = $template -split "="
-                $oid = $templateSplit[1]
-                write-output "OID2 = $oid"
-            }
-        #} catch {
-        #    Write-Error "Error getting OID: $_"
-        #    throw
-        #}
+        $temp = $cert.Certificate.Extensions | ?{$_.Oid.Value -eq "1.3.6.1.4.1.311.20.2"}
+        if (!$temp) {
+            $temp = $cert.Certificate.Extensions | ?{$_.Oid.Value -eq "1.3.6.1.4.1.311.21.7"}
+        }
+        $temp = $temp.Format(0)
+        write-output $temp
+        $substring = $temp -match '\((.*?)\)' | Out-Null
+        $oid= $matches[1]
+        write-output "OID1 = $oid"
 
-
+        if ($oid -eq $null) {
+            $split = $temp -split ","
+            $template = $split[0]
+            $templateSplit = $template -split "="
+            $oid = $templateSplit[1]
+            write-output "OID2 = $oid"
+        }
 
         # Generate CSR in Key Vault
         try {

@@ -166,7 +166,7 @@
         "UniqueStringBasedOnTimeStamp": "[uniqueString(deployment().name, parameters('_CurrentDateTimeInTicks'))]",
         "DCnicName": "[concat(parameters('DCvmName'),'-nic')]",
         "DCpublicIPAddressName": "[concat(parameters('DCvmName'),'-ip')]",
-        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]",
+        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]"
         
     },
     "resources": [
@@ -611,7 +611,7 @@
                 "logActivityTrace": 0,
                 "description": "Certificate Lifecycle Management",
                  "publishContentLink": {
-                    "uri": "https://raw.githubusercontent.com/fabmas/certlc/main/.runbook/runbook_v2.ps1",
+                    "uri": "https://raw.githubusercontent.com/fabmas/certlc/main/.runbook/runbook_v3.ps1",
                     "version": "2.1.0.0"
                 }
             }
