@@ -127,6 +127,13 @@
             "type": "String",
             "defaultValue": "DEMO-AA-<UNIQUESTRING>"
         },
+        "webhookName": {
+            "metadata": {
+                "description": "Name of the Webhook resource"
+            },
+            "type": "String",
+            "defaultValue": "clc-webhook"
+        },
         "WorkerGroupName": {
             "metadata": {
                 "description": "Name of the Hybrid Runbook Worker Group"
@@ -615,7 +622,7 @@
         {  
             "type": "Microsoft.Automation/automationAccounts/webhooks",  
             "apiVersion": "2022-08-08",  
-            "name": "[concat(parameters('AutomationAccountName'), '/webhook')]", 
+            "name": "[concat(parameters('AutomationAccountName'), '/', parameters('webhookName'))]", 
             "dependsOn": [  
                 "[parameters('automationAccountName')]",  
                 "[concat(parameters('AutomationAccountName'), 'CertLifeCycleMgmt')]"
@@ -710,7 +717,8 @@
             "apiVersion": "2023-06-01-preview",
             "name": "[concat(parameters('EventGridName'), '/CertLC')]",
             "dependsOn": [
-                "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]"
+                "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]",
+                "[resourceId('Microsoft.Automation/automationAccounts/webhooks', parameters('AutomationAccountName'), parameters('webhookName'))]"
             ],
             "properties": {
                 "destination": {
@@ -720,8 +728,6 @@
                         "endpointUrl": "[reference(parameters('webhookName')).uri]"
                     },
                     "endpointType": "WebHook"
-                
-                    
                 },
                 "filter": {
                     "includedEventTypes": [
