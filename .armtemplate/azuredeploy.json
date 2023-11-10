@@ -45,6 +45,7 @@
         },
         "DomainAdminUsername": {
             "type": "string",
+            "defaultValue": "demoadmin",
             "metadata": {
                 "description": "The name of the administrator account of the new VM and domain"
             }
@@ -95,14 +96,15 @@
             },        
         "CAadminUsername": {
             "type": "string",
+            "defaultValue": "caadmin",
             "metadata": {
-                "description": "The name of the administrator of the new VM."
+                "description": "The name of the administrator of the Certificate Service VM."
             }
         },
         "CAadminPassword": {
             "type": "secureString",
             "metadata": {
-                "description": "The password for the administrator account of the new VM."
+                "description": "The password for the administrator account of the Certificate Service VM."
             }
         },
         "KeyvaultName": {
@@ -143,6 +145,14 @@
         },
 
 
+        "WebhookExpiryTime": {
+            "type": "string",
+            "defaultValue": "[add(utcNow(), '365.00:00:00')]",
+            "metadata": {
+                "description": "The expiry time for the webhook. Default is 365 days from now."
+            }
+        },
+
         "_CurrentDateTimeInTicks": {
             "metadata": {
                 "description": "Current date time in ticks used for unique variables"
@@ -157,7 +167,7 @@
         "DCnicName": "[concat(parameters('DCvmName'),'-nic')]",
         "DCpublicIPAddressName": "[concat(parameters('DCvmName'),'-ip')]",
         "CAnicName": "[concat(parameters('CAvmName'),'-nic')]",
-        "WebhookExpiryTime": "2024-11-10T15:40:02.836+00:00"    
+        
     },
     "resources": [
         {
@@ -520,7 +530,7 @@
                 "enableSoftDelete": true,
                 "softDeleteRetentionInDays": 90,
                 "enableRbacAuthorization": true,
-                "enablePurgeProtection": true,
+                "enablePurgeProtection": false,
                 "vaultUri": "[concat(concat('https://',parameters('KeyvaultName')),'.vault.azure.net/')]",
                 "publicNetworkAccess": "Enabled"
             }
@@ -617,7 +627,7 @@
             ],  
             "properties": {  
                 "isEnabled": true,  
-                "expiryTime": "[variables('WebhookExpiryTime')]",  
+                "expiryTime": "[parameters('WebhookExpiryTime')]",  
                 "runbook": {  
                     "name": "CertLifeCycleMgmt"  
                 },
@@ -653,11 +663,11 @@
 
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name":  "[concat(parameters('CAvmName'),'/KeyVaultForWindows')]",
+            "name":  "[concat(parameters('DCvmName'),'/KeyVaultForWindows')]",
             "apiVersion": "2022-08-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('DCvmName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('CAvmName'), 'HybridWorkerExtension')]"
             ],
             "properties": {
