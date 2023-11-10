@@ -621,7 +621,7 @@
 
         {  
             "type": "Microsoft.Automation/automationAccounts/webhooks",  
-            "apiVersion": "2022-08-08",  
+            "apiVersion": "2015-10-31",  
             "name": "[concat(parameters('AutomationAccountName'), '/', parameters('webhookName'))]", 
             "dependsOn": [  
                 "[parameters('automationAccountName')]",
@@ -632,7 +632,8 @@
                 "expiryTime": "[variables('WebhookExpiryTime')]",  
                 "runbook": {  
                     "name": "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]"  
-                }  
+                },
+                "runOn": "[parameters('WorkerGroupName')]"
             }  
         } ,  
 

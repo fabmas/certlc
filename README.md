@@ -31,13 +31,7 @@ Get-AzKeyVaultCertificate -VaultName pv-kv01 -name prova-pfx | select SecretID
 
 vedi esempio per lanciare il webhook da powershell in **kvextension.ps1**
 
-## Secrets
-|description|secret|
-|---|---|
-|Eventgridwriter-secret|J9d8Q~XET2VoVuNRv1OIP573qYrEjSzX.IF6Rc_p|
-|Webhook-secret|ZR_8Q~jgdNqeZ6IzuD3dIfJlclBgyxpmTgbYzaAs|
-
 
 ## Permessi sul KeyVault per la sicurezza
 - Identità dell'automation account deve essere Keyvault Certificate Officer su tutto il KeyVault (KV dedicato solo a certificatelifecycle)
-- La managed Identity del Server su cui installare l'extension per il rinnovo del cert deve essere Keyvault Secret User sul SINGOLO CERTIFICATO
+- La managed Identity del Server su cui installare l'extension per il rinnovo del cert deve essere Keyvault Secret User sul **SINGOLO CERTIFICATO**
