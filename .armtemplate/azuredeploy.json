@@ -155,8 +155,8 @@
         "UniqueStringBasedOnTimeStamp": "[uniqueString(deployment().name, parameters('_CurrentDateTimeInTicks'))]",
         "DCnicName": "[concat(parameters('DCvmName'),'-nic')]",
         "DCpublicIPAddressName": "[concat(parameters('DCvmName'),'-ip')]",
-        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]"
-       
+        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]",
+        "WebhookExpiryTime": "[add(utcNow(), '365.00:00:00')]"    
     },
     "resources": [
         {
@@ -612,11 +612,28 @@
                 "logActivityTrace": 0,
                 "description": "Certificate Lifecycle Management",
                  "publishContentLink": {
-                    "uri": "https://raw.githubusercontent.com/fabmas/certlc/main/.runbook/runbook_v3.ps1",
+                    "uri": "https://raw.githubusercontent.com/fabmas/certlc/main/.runbook/runbook_v2.ps1",
                     "version": "2.1.0.0"
                 }
             }
-        },        
+        },     
+
+        {  
+            "type": "Microsoft.Automation/automationAccounts/webhooks",  
+            "apiVersion": "2022-08-08",  
+            "name": "[concat(parameters('AutomationAccountName'), '/webhook')]", 
+            "dependsOn": [  
+                "[parameters('automationAccountName')]",  
+                "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]"
+            ],  
+            "properties": {  
+                "isEnabled": true,  
+                "expiryTime": "[variables('WebhookExpiryTime')]",  
+                "runbook": {  
+                    "name": "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]"  
+                }  
+            }  
+        } ,  
 
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
@@ -680,9 +697,7 @@
             }
         },
 
- 
-
-        {
+         {
             "type": "Microsoft.EventGrid/systemTopics",
             "apiVersion": "2023-06-01-preview",
             "name": "[parameters('EventGridName')]",
@@ -699,7 +714,7 @@
         {
             "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
             "apiVersion": "2023-06-01-preview",
-            "name": "[concat(parameters('EventGridName'), '/LogicAppCertLC')]",
+            "name": "[concat(parameters('EventGridName'), '/CertLC')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]"
             ],
@@ -708,7 +723,7 @@
                     "properties": {
                         "maxEventsPerBatch": 1,
                         "preferredBatchSizeInKilobytes": 64,
-                        "endpointUrl": "[listCallbackUrl(resourceId('Microsoft.Logic/workflows/triggers', parameters('logicAppName'), 'CertificateNearExpiry'), '2019-05-01').value]"
+                        "endpointUrl": "[reference(parameters('webhookName')).uri]"
                     },
                     "endpointType": "WebHook"
                 
