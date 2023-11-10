@@ -610,7 +610,8 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('CAvmName'), '/ExecuteScript'))]"
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Automation.HybridWorker",
@@ -624,7 +625,6 @@
                 }
             }
         },
-
 
         {
             "type": "Microsoft.Authorization/roleAssignments",
