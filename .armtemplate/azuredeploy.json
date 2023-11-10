@@ -556,7 +556,7 @@
         },        
         
         {
-            "name": "[parameters('WorkerGroupName')]",
+            "name": "[concat(parameters('AutomationAccountName'),'/',parameters('WorkerGroupName'))]",
             "type": "Microsoft.Automation/automationAccounts/hybridRunbookWorkerGroups",
             "apiVersion": "2022-08-08",
             "dependsOn": [
