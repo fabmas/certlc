@@ -18,7 +18,7 @@ Get-AzKeyVaultCertificate -VaultName "fabmas-DEMO-KV-02" -name democert | select
 
 # Build settings on Windows VM
 $settings = (get-content -raw ".\kvextensionwin.json")
-$extName =  "KeyVaultForWindows"
+$extName = "KeyVaultForWindows"
 $extPublisher = "Microsoft.Azure.KeyVault"
 $extType = "KeyVaultForWindows"
  
@@ -29,7 +29,7 @@ Set-AzVmExtension -TypeHandlerVersion "3.0" -ResourceGroupName "certlc" -Locatio
 
 # Build settings on Linux VM
 $settings = (get-content -raw ".\kvextensionlinux.json")
-$extName =  "KeyVaultForLinux"
+$extName = "KeyVaultForLinux"
 $extPublisher = "Microsoft.Azure.KeyVault"
 $extType = "KeyVaultForLinux"
 
@@ -39,7 +39,7 @@ Set-AzVmExtension -TypeHandlerVersion "2.0" -EnableAutomaticUpgrade $true -Resou
 ##############################
 # Build settings on Windows ARC Server
 $settings = (get-content -raw ".\kvextensionARCWin.json")
-$extName =  "KeyVaultForWindows"
+$extName = "KeyVaultForWindows"
 $extPublisher = "Microsoft.Azure.KeyVault"
 $extType = "KeyVaultForWindows"
  
@@ -54,19 +54,19 @@ New-AzConnectedMachineExtension -ResourceGroupName "PosteVITA" -MachineName "ADF
 $Settings = @{
     secretsManagementSettings = @{
         observedCertificates = @(
-        "https://kv-testpv.vault.azure.net:443/secrets/certificate2"
-        # Add more here, don't forget a comma on the preceding line
+            "https://kv-testpv.vault.azure.net:443/secrets/certificate2"
+            # Add more here, don't forget a comma on the preceding line
         )
         # The cert store location is optional, the default path is shown below
         # certificateStoreLocation = "/var/lib/waagent/Microsoft.Azure.KeyVault.Store/"
-        pollingIntervalInS = "60" 
+        pollingIntervalInS   = "60" 
     }
-    authenticationSettings = @{
+    authenticationSettings    = @{
         msiEndpoint = "http://localhost:40342/metadata/identity"
     }
 }
 
-$extName =  "KeyVaultForLinux"
+$extName = "KeyVaultForLinux"
 $extPublisher = "Microsoft.Azure.KeyVault"
 $extType = "KeyVaultForLinux"
 
@@ -82,21 +82,26 @@ New-AzConnectedMachineExtension -ResourceGroupName "pvtest"-MachineName "angelo-
 
 ################################
 #Test webhook
-$body = '[{
-    "id": "ad222cc0-3e08-4634-bcb3-60a73f54318a",
-    "topic": "/subscriptions/577dd4dc-387b-4e19-885e-f0788b27f2c7/resourceGroups/PosteVITA/providers/Microsoft.KeyVault/vaults/pv-kv01",
-    "subject": "pippo",
-    "eventType": "Microsoft.KeyVault.CertificateNearExpiry",
-    "data": {
-      "Id": "https://certlc-kv01.vault.azure.net/certificates/pippo/f01a4ce4aca8467aa8c87046936089e3",
-      "VaultName": "fabmas-DEMO-KV-06",
-      "ObjectType": "Certificate",
-      "ObjectName": "democert",
-      "Version": "f01a4ce4aca8467aa8c87046936089e3",
-      "NBF": 1697808670,
-      "EXP": 1698154270
-      }
-    }]'
+$body = '[
+    {
+      "id": "df4de7ec-6291-4e34-a430-42e0a7384c01",
+      "topic": "/subscriptions/0f3f9511-aa31-4981-a283-f6bb651546d7/resourceGroups/CERTLC/providers/Microsoft.KeyVault/vaults/fabmas-DEMO-KV-07",
+      "subject": "democert",
+      "eventType": "Microsoft.KeyVault.CertificateNearExpiry",
+      "data": {
+        "Id": "https://fabmas-demo-kv-07.vault.azure.net/certificates/democert/e0765abf606b4429b99a3b0ede90b3ef",
+        "VaultName": "fabmas-DEMO-KV-07",
+        "ObjectType": "Certificate",
+        "ObjectName": "democert",
+        "Version": "e0765abf606b4429b99a3b0ede90b3ef",
+        "NBF": 1699656798,
+        "EXP": 1700088798
+      },
+      "dataVersion": "1",
+      "metadataVersion": "1",
+      "eventTime": "2023-11-10T23:07:16.4775919Z"
+    }
+  ]'
 
 $Headers = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
 $Headers.Add('aeg-subscription-name', 'SECURE-WEBHOOK') 
@@ -110,10 +115,10 @@ $Headers.Add('x-ms-request-id', '1cce86be-f112-436b-beee-ae9a051b3116')
 
 
 #angelom
-$webhookURI = "https://5e314d7b-cfce-415f-aaca-73cf2a963b8c.webhook.we.azure-automation.net/webhooks?token=ao7%2bS7P7Wp2vLuEktvwuH5nYhMQRHluVPB%2foeGXi73o%3d"
+$webhookURI = "https://1af729e4-f610-4e9a-abe5-a8e623eafc95.webhook.we.azure-automation.net/webhooks?token=KZZ6W2YIbytll07%2fpaJMMkGLmZ1OiABVL4rQo2yns78%3d"
 
 #fabmas
-$webhookURI = ""
+$webhookURI = "https://1af729e4-f610-4e9a-abe5-a8e623eafc95.webhook.we.azure-automation.net/webhooks?token=KZZ6W2YIbytll07%2fpaJMMkGLmZ1OiABVL4rQo2yns78%3d"
 
 
 $response = Invoke-WebRequest -Method Post -Uri $webhookURI -Headers $Headers -Body $body -UseBasicParsing
@@ -125,19 +130,19 @@ azcopy copy "https://md-nv2vhkz3glvq.z1.blob.storage.azure.net/fnml0nf1v4ql/abcd
 
 #CREAZIONE DISCHI
 # Provide the subscription Id where the VHD is stored
-$subscriptionId="0f3f9511-aa31-4981-a283-f6bb651546d7"
+$subscriptionId = "0f3f9511-aa31-4981-a283-f6bb651546d7"
 # Set the context to the subscription Id where VHD is stored
 az account set --subscription $subscriptionId
 
 
 # Provide the URL of the VHD in the storage account
-$vhdUrl="https://famascitmp.blob.core.windows.net/snapshots/pv-os.vhd"
+$vhdUrl = "https://famascitmp.blob.core.windows.net/snapshots/pv-os.vhd"
 
 # Provide the location (i.e., Azure region)
-$location="westeurope"
+$location = "westeurope"
 
 # Provide the name of the OS disk
-$osDiskName="pv-DC01-OS"
+$osDiskName = "pv-DC01-OS"
 
 
 # Create OS disk from the VHD
@@ -153,3 +158,30 @@ az disk create --resource-group $resourceGroupName --name $diskName --source  $v
 ##########
 Set-AzVMExtension -ResourceGroupName "Poste-Vita" -VMName "pv-dc01" -Location "westeurope" -Publisher "Microsoft.Azure.Security.MDE" -ExtensionType "MDE.Windows" -TypeHandlerVersion "1.0" -Name "DefenderForEndpoint"
 
+
+
+
+$temp = "Template=1.3.6.1.4.1.311.21.8.13172761.5506148.3097506.3378869.1791674.67.38881081.92656882, Major Version Number=100, Minor Version Number=3"
+write-output "temp = $temp"
+$oid=$null
+$substring = $temp -match '\((.*?)\)' | Out-Null
+if ($matches -ne $null -and $matches.Count -gt 0) {
+    $oid = $matches[1]
+    write-output "OID1 = $oid"
+} 
+
+if ($oid -eq $null) {
+    $split = $temp -split ","
+    $template = $split[0]
+    $templateSplit = $template -split "="
+    $oid = $templateSplit[1]
+    write-output "OID2 = $oid"
+}
+
+if ($oid -eq $null) {
+    $pattern = 'Template=([\d.]+)'
+    if ($temp -match $pattern) {
+        $oid = $matches[1]
+        write-output "OID3 = $oid"
+    } 
+}
