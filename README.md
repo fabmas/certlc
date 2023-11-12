@@ -22,6 +22,9 @@ The Azure environment in question comprises the following Platform as a Service 
 
 The seamless integration of Azure Key Vault with the certificate renewal workflow involves a meticulously orchestrated process, ensuring the timely update of certificates across servers, both on Azure (IaaS) and on-premises servers onboarded with Azure ARC.
 
+> [NOTE]
+> inserire una figura con freccette che illustrano workflow
+
 1. **Key Vault Configuration:**
 The process begins with the certificates residing within the Key Vault. The servers that need to utilize these certificates are equipped with the Key Vault extension, a versatile tool compatible with Windows and Linux both Azure-based (IaaS) servers and on-premises servers integrated through Azure ARC.
 
@@ -47,34 +50,34 @@ The script downloads the CSR and submits it to the Certification Authority, gene
 The script imports the renewed certificate back into the Key Vault, finalizing the update process. The Key Vault extension plays a pivotal role in this phase by automatically downloading the latest version of the certificate into the local store of the server utilizing it.
 
 
-### Components
+## Components
 bla bla bla 
 > [!NOTE]
 > + Inserire i macro passi come se dovessi implemenare la soluzione manualmente
 > + inserire qui anche gli aspetti di sicurezza e gli eventuali improvement con la Logic App oppure riferimento ad articolo per le chiamate autenticate con beerer verso il webhook 
 
-#### Key Vault Extension
+### Key Vault Extension
 The Key Vault Extension is a crucial component for automating certificate renewal. It must be installed on servers where certificate renewal automation is desired. The installation procedures for Windows servers can be found at [Key Vault Extension for Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows), for Linux servers at [Key Vault Extension for Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux), and for Azure ARC-enabled servers at [Azure Key Vault Extension for ARC-enabled Servers](https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739).
 
 > [!NOTE]
 > + inserire qualche esempio di quelli che abbiamo provato ?
-#### Automation Account
+### Automation Account
 The Automation Account acts as the orchestrator for the certificate renewal process. It needs to be configured with a runbook, and the PowerShell script for the runbook can be found [here](./.runbook/runbook_v2.ps1). Additionally, an Hybrid Worker Group must be created, associating it with the Certification Authority for executing runbooks. The runbook should have a webhook associated with it, initiated from the Hybrid Runbook Worker.
 
 > [!NOTE!]
 > inserire link su come si crea hybrid worker, runbook e webhook ???
 
-#### Hybrid runbook worker
+### Hybrid runbook worker
 The Hybrid Runbook Worker plays a pivotal role in executing runbooks. It needs to be installed with the Key Vault Extension, which is the supported mode for the new installation. The Hybrid Runbook Worker should contain the Certification Authority, which can be either on Azure or on-premises.
 
-#### Azure Key Vault
+### Azure Key Vault
 Azure Key Vault is the secure repository for certificates. The Automation Account and the server requiring certificate access must be granted specific permissions within the Key Vault. The permission model should include 'Get' and 'List' permissions for the automation account and the server. Additionally, in the Event section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account.
 
 > [!NOTE]
 >+ inserire i RUOLI corretti che devono essere assegnati all'automation account e al server che deve leggere il certificato
 >+ inserire che nella sezione Event deve essere associato l'eventgrid system topic con il webhook dell'automation account
 
-#### Azure Event Grid
+### Azure Event Grid
 Event Grid facilitates event-driven communication within the Azure environment. It needs to be configured with the Event Grid System Topic and the Event Subscription. This ensures that relevant events, such as certificate expiration alerts, trigger the necessary actions within the automation workflow.
 
 ## Deploy this scenario
