@@ -1,37 +1,104 @@
-# Azure CA Lifecycle Management
 
-## Deployment DEMO environment
+
+In the realm of cybersecurity, the automatic renewal of certificates is a critical aspect of maintaining a secure and reliable environment. While Azure Key Vault already offers mechanisms for the [automatic renewal of certificates](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate?tabs=azure-portal) issued by an integrated Certification Authority (CA), this article focuses on outlining a streamlined process for the automatic renewal of certificates issued by a non-integrated CA.
+
+Azure's Key Vault boasts a robust system for managing cryptographic keys and secrets securely. It integrates seamlessly with integrated CAs, facilitating the automatic renewal of certificates. However, when dealing with non-integrated CAs, a manual approach is often required. This article aims to bridge this gap by elucidating an automated renewal process for certificates from non-integrated CAs, offering efficiency and enhanced security.
+
+## Architecture
+
+Before delving into the intricacies of the automated renewal process, let's take a brief look at the architecture that forms the backbone of this solution. 
+
+![reference architecture](./.media/certlc-arch.jpg)
+
+
+*Download a [Visio file](./.media/certlc.vsdx) of this architecture.*
+
+The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a Key Vault, an Event Grid System topic, and an Automation Account exposing a webhook targeted by the Event Grid.
+
+> [!NOTE]
+> ***aggiungere da qualche parte che una volta scaricato il certificato sul client, deve essere rifatto il binding con il servizio che lo usa ad esempio IIS***
+
+## Workflow
+
+The seamless integration of Azure Key Vault with the certificate renewal workflow involves a meticulously orchestrated process, ensuring the timely update of certificates across servers, both on Azure (IaaS) and on-premises servers onboarded with Azure ARC.
+
+1. **Key Vault Configuration:**
+The process begins with the certificates residing within the Key Vault. The servers that need to utilize these certificates are equipped with the Key Vault extension, a versatile tool compatible with Windows and Linux both Azure-based (IaaS) servers and on-premises servers integrated through Azure ARC.
+
+1. **Extension Configuration:**
+The Key Vault extension is configured to periodically poll the Key Vault for any updated certificates. This polling interval is customizable, allowing flexibility to align with specific operational requirements.
+
+1. **Event Grid and Automation Account Integration:**
+The Event Grid, vigilant for certificates approaching expiration, intercepts this critical event. Upon detection, the Event Grid triggers the execution of a runbook through the webhook configured in the Automation Account.
+
+1. **Hybrid Runbook Worker Execution:**
+The runbook, executed within the Certification Authority configured as a Hybrid Runbook Worker, takes as input the webhook body containing the name of the expiring certificate and the Key Vault hosting it.
+
+1. **Certificate Template Retrieval:**
+Leveraging Azure connectivity, the script within the runbook connects to Azure to retrieve the certificate's template name used during its generation.
+
+1. **Certificate Renewal Request:**
+Subsequently, the script interfaces with the Key Vault, initiating a certificate renewal request. This request results in the generation of a Certificate Signing Request (CSR).
+
+1. **CSR Processing and Certificate Generation:**
+The script downloads the CSR and submits it to the Certification Authority, generating a new certificate based on the correct template. This ensures that the renewed certificate aligns with the predefined security policies.
+
+1. **Certificate Import and Key Vault Update:**
+The script imports the renewed certificate back into the Key Vault, finalizing the update process. The Key Vault extension plays a pivotal role in this phase by automatically downloading the latest version of the certificate into the local store of the server utilizing it.
+
+
+### Components
+bla bla bla 
+> [!NOTE]
+> + Inserire i macro passi come se dovessi implemenare la soluzione manualmente
+> + inserire qui anche gli aspetti di sicurezza e gli eventuali improvement con la Logic App oppure riferimento ad articolo per le chiamate autenticate con beerer verso il webhook 
+
+#### Key Vault Extension
+The Key Vault Extension is a crucial component for automating certificate renewal. It must be installed on servers where certificate renewal automation is desired. The installation procedures for Windows servers can be found at [Key Vault Extension for Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows), for Linux servers at [Key Vault Extension for Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux), and for Azure ARC-enabled servers at [Azure Key Vault Extension for ARC-enabled Servers](https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739).
+
+> [!NOTE]
+> + inserire qualche esempio di quelli che abbiamo provato ?
+#### Automation Account
+The Automation Account acts as the orchestrator for the certificate renewal process. It needs to be configured with a runbook, and the PowerShell script for the runbook can be found [here](./.runbook/runbook_v2.ps1). Additionally, an Hybrid Worker Group must be created, associating it with the Certification Authority for executing runbooks. The runbook should have a webhook associated with it, initiated from the Hybrid Runbook Worker.
+
+> [!NOTE!]
+> inserire link su come si crea hybrid worker, runbook e webhook ???
+
+#### Hybrid runbook worker
+The Hybrid Runbook Worker plays a pivotal role in executing runbooks. It needs to be installed with the Key Vault Extension, which is the supported mode for the new installation. The Hybrid Runbook Worker should contain the Certification Authority, which can be either on Azure or on-premises.
+
+#### Azure Key Vault
+Azure Key Vault is the secure repository for certificates. The Automation Account and the server requiring certificate access must be granted specific permissions within the Key Vault. The permission model should include 'Get' and 'List' permissions for the automation account and the server. Additionally, in the Event section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account.
+
+> [!NOTE]
+>+ inserire i RUOLI corretti che devono essere assegnati all'automation account e al server che deve leggere il certificato
+>+ inserire che nella sezione Event deve essere associato l'eventgrid system topic con il webhook dell'automation account
+
+#### Azure Event Grid
+Event Grid facilitates event-driven communication within the Azure environment. It needs to be configured with the Event Grid System Topic and the Event Subscription. This ensures that relevant events, such as certificate expiration alerts, trigger the necessary actions within the automation workflow.
+
+## Deploy this scenario
+bla bla bla
+
+>[NOTE!]
+> questo pulsante effettua il deployment dell'ambiente DEMO comprensivo di DC e CA. Eventualmente mettere un riferimento al deployment dell'ambiente demo e qui fare un estratto del json solo per la parte paas descritta in questo articolo.
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fazuredeploy.json)
 
 
-## Articoli di riferimento:
-1. (per Windows): https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows
-1. (per Linux):https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux
-1. (per ARC): https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739
-1. configure token lifetime : https://learn.microsoft.com/it-it/entra/identity-platform/configure-token-lifetimes
-1. Configure Enterprise RootCA: https://bgelens.nl/integrating-vm-role-with-desired-state-configuration-part-2-pki/
+## Contributors
 
-## Note
-- Salvare il certificato (e non il secret) all'interno di "Certificate" nel keyvault
-- il file **kvextension.ps1** contiene gli esempi per il push dell'extension per Win/Linux ARCWin/ARCLinux
-- il file **kvextension.ps1** contiene un esempio per il test veloce del webhook con un JSON di input (per il cert pippo)
-- Assegnare all'identity delle VM o al service principal della ARCMachine i ruoli di "Key Vault Secrets User" sul keyVault
-- Prendere il SecretID *SENZA LA VERSIONE* a partire dal certificato all'interno del keyvault
-Get-AzKeyVaultCertificate -VaultName pv-kv01 -name prova-pfx | select SecretID
-- Nel file Json per la configurazione dell'extension specificare il SecretID (es:https://pv-kv01.vault.azure.net:443/secrets/prova-PFX)
-- Configurare il WebHook per girare con l'Hybrid Worker
-- Configurare Az.Accounts con versione 2.12.1 (2.13 non funziona) Install-Module Az.Accounts -requiredVersion 2.12.1
-- seguire gli step per la comunicazione autenticata tra eventgrid e webhook indicata qui: https://learn.microsoft.com/en-us/azure/event-grid/secure-webhook-delivery#configure-the-event-subscription-by-using-a-microsoft-entra-application
+*This article is maintained by Microsoft. It was originally written by the following contributors.*
 
-## Web Hook:
-(fabmas-Azure) https://791d2196-d4f8-4191-bda4-2423f9c0dd9a.webhook.we.azure-automation.net/webhooks?token=mUAIvhMaIIR76kIXs4TxhEmn47Z4l58M0snbW8BmCIA%3d
+Principal author:
 
-(angelom) https://5e314d7b-cfce-415f-aaca-73cf2a963b8c.webhook.we.azure-automation.net/webhooks?token=ao7%2bS7P7Wp2vLuEktvwuH5nYhMQRHluVPB%2foeGXi73o%3d
+- [Fabio Masciotra](https://www.linkedin.com/in/fabiomasciotra/) | Principal Consultant
+- [Angelo Mazzucchi](https://www.linkedin.com/in/angelo-mazzucchi-a5a94270) | Delivery Architect
 
-vedi esempio per lanciare il webhook da powershell in **kvextension.ps1**
+*To see non-public LinkedIn profiles, sign in to LinkedIn.*
 
+## Next steps
+bla bla bla
 
-## Permessi sul KeyVault per la sicurezza
-- Identità dell'automation account deve essere Keyvault Certificate Officer su tutto il KeyVault (KV dedicato solo a certificatelifecycle)
-- La managed Identity del Server su cui installare l'extension per il rinnovo del cert deve essere Keyvault Secret User sul **SINGOLO CERTIFICATO**
+## Related resources
+bla bla bla
