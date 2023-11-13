@@ -6,21 +6,21 @@ Azure's Key Vault boasts a robust system for managing cryptographic keys and sec
 
 ## Architecture
 
-Before delving into the intricacies of the automated renewal process, let's take a brief look at the architecture that forms the backbone of this solution. 
+Before delving into details of the automated renewal process, let's take a brief look at the architecture that forms the backbone of this solution. 
 
 ![reference architecture](./.media/certlc-arch.jpg)
 
 
 *Download a [Visio file](./.media/certlc.vsdx) of this architecture.*
 
-The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a Key Vault, an Event Grid System topic, and an Automation Account exposing a webhook targeted by the Event Grid.
+The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a Key Vault, an Event Grid System topic, and an Automation Account exposing a webhook targeted by the Event Grid. It is assumed that an existing Public Key Infrastructure (PKI) infrastructure, consisting of an Enterprise Certification Authority joined to an Active Directory domain, is already in place for this scenario.
 
 > [!NOTE]
 > ***aggiungere da qualche parte che una volta scaricato il certificato sul client, deve essere rifatto il binding con il servizio che lo usa ad esempio IIS***
 
 ## Workflow
 
-The seamless integration of Azure Key Vault with the certificate renewal workflow involves a meticulously orchestrated process, ensuring the timely update of certificates across servers, both on Azure (IaaS) and on-premises servers onboarded with Azure ARC.
+The automated workflow for certificate renewal within the Azure ecosystem is a well-coordinated process, ensuring the timely and secure update of certificates across servers, whether on Azure (IaaS) or on-premises servers integrated through Azure ARC.
 
 > [NOTE]
 > inserire una figura con freccette che illustrano workflow
@@ -32,7 +32,7 @@ The process begins with the certificates residing within the Key Vault. The serv
 The Key Vault extension is configured to periodically poll the Key Vault for any updated certificates. This polling interval is customizable, allowing flexibility to align with specific operational requirements.
 
 1. **Event Grid and Automation Account Integration:**
-The Event Grid, vigilant for certificates approaching expiration, intercepts this critical event. Upon detection, the Event Grid triggers the execution of a runbook through the webhook configured in the Automation Account.
+The Event Grid, actively monitoring certificates nearing expiration, intercepts this event. Upon detection, the Event Grid triggers the execution of a runbook through the webhook configured in the Automation Account.
 
 1. **Hybrid Runbook Worker Execution:**
 The runbook, executed within the Certification Authority configured as a Hybrid Runbook Worker, takes as input the webhook body containing the name of the expiring certificate and the Key Vault hosting it.
