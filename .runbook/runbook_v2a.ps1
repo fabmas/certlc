@@ -146,22 +146,28 @@ try {
                 $EmailSubject = "Certificate $ObjectName renewed"
                 #HTML Template
                 $EmailBody = @"
-                <table style="width: 68%" style="border-collapse: collapse; border: 1px solid #008080;">
-                <tr>
-                    <td colspan="2" bgcolor="#008080" style="color: #FFFFFF; font-size: large; height: 35px;">
-                        Certificate LifeCycle Automation - Certificate Update Notification Maildate
-                    </td>
-                </tr>
-                <tr style="border-bottom-style: solid; border-bottom-width: 1px; padding-bottom: 1px">
-                    <td style="width: 201px; height: 35px">  Name of Updated Certificate</td>
-                    <td style="text-align: center; height: 35px; width: 233px;">
-                    <b>CertName</b></td>
-                </tr>
+                <table style="width: 50%" style="border-collapse: collapse; border: 1px solid #008080;">
+                    <tr>
+                        <td colspan="2" bgcolor="#008080" style="color: #FFFFFF; font-size: large; font-family: Calibri; height: 35px;">
+                            Certificate LifeCycle Automation - Certificate Update Notification Maildate
+                        </td>
+                    </tr>
+                    <tr style="border-bottom-style: solid; border-bottom-width: 1px; padding-bottom: 1px">
+                        <td style="width: 100px; height: 35px"> Updated Certificate</td>
+                        <td style="text-align: center; height: 35px; width: 233px;">
+                        <b>CertName</b></td>
+                    </tr>
+                    <tr style="height: 39px; border: 1px solid #008080">
+                        <td style="width: 100px; height: 35px">  New Expiration Time</td>
+                        <td style="text-align: center; height: 35px; width: 233px;">
+                        <b>NewExpTime</b></td>
+                    </tr>
                 </table>
 "@
 
                 $EmailBody= $EmailBody.Replace("CertName",$ObjectName)
                 $EmailBody= $EmailBody.Replace("Maildate",$Maildate)
+                $EmailBody= $EmailBody.Replace("NewExpTime",$newCert.certificate.NotAfter)
                 
                 #Send E-mail from PowerShell script
                 Send-MailMessage -To $EmailTo -From $EmailFrom -Subject $EmailSubject -Body $EmailBody -BodyAsHtml -SmtpServer $SmtpServer
