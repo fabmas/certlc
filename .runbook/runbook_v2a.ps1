@@ -5,13 +5,12 @@ param
 )
 
 write-output "start"
-#write-output $WebhookData.RequestBody
-write-output $WebhookData
+write-output $WebhookData.RequestBody
+#write-output $WebhookData
 try {
-    if ($WebhookData) {
-        $body = (ConvertFrom-Json -InputObject $WebhookData)
-        $body = $WebhookData
-
+    if ($WebhookData.RequestBody) {
+        $body = (ConvertFrom-Json -InputObject $WebhookData.RequestBody)
+        
         # VARIABLE FROM WEBHOOK QUERY
         $VaultName = $body.data.VaultName
         $ObjectName = $body.data.ObjectName
@@ -56,10 +55,13 @@ try {
             $temp = $cert.Certificate.Extensions | ?{$_.Oid.Value -eq "1.3.6.1.4.1.311.21.7"}
         }
         $temp = $temp.Format(0)
-        write-output $temp
+        write-output "temp = $temp"      
+        $oid=$null
         $substring = $temp -match '\((.*?)\)' | Out-Null
-        $oid= $matches[1]
-        write-output "OID1 = $oid"
+        if ($matches -ne $null -and $matches.Count -gt 0) {
+            $oid = $matches[1]
+            write-output "OID1 = $oid"
+        } 
 
         if ($oid -eq $null) {
             $split = $temp -split ","
@@ -67,6 +69,14 @@ try {
             $templateSplit = $template -split "="
             $oid = $templateSplit[1]
             write-output "OID2 = $oid"
+        }        
+        
+        if ($oid -eq $null) {
+            $pattern = 'Template=([\d.]+)'
+            if ($temp -match $pattern) {
+                $oid = $matches[1]
+                write-output "OID3 = $oid"
+            } 
         }
 
         # Generate CSR in Key Vault
@@ -111,23 +121,16 @@ try {
         # Keyvault commands
         ########################
 
+        Write-Output "Recipient: $Recipient"
         # Import the new certificate in the Key Vault
         try {
-            Import-AzKeyVaultCertificate -VaultName $VaultName -Name $ObjectName -FilePath $tempFile -Tags @{"recipient"=$Recipient}    
+            $tag = @{ "recipient" = $Recipient  }
+            Import-AzKeyVaultCertificate -VaultName $VaultName -Name $ObjectName -FilePath $tempFile
+            Update-AzKeyVaultCertificate -VaultName $VaultName -Name $ObjectName -Tags $tag -PassThru
         } catch {
             Write-Error "Error importing certificate to Key Vault: $_"
             throw
         }
-
-        # Set Recipient in the tags of the new certificate version
-        try {
-            $cert = Get-AzKeyVaultCertificate -VaultName $VaultName -name $ObjectName
-            $Recipient = $cert.Tags.recipient
-        } catch {
-            Write-Error "Error getting certificate from Key Vault: $_"
-            throw
-        }
-
 
         # Send notification email to recipient
         try {
