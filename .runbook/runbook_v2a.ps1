@@ -153,13 +153,13 @@ try {
                         </td>
                     </tr>
                     <tr style="border-bottom-style: solid; border-bottom-width: 1px; padding-bottom: 1px">
-                        <td style="width: 100px; height: 35px"> Updated Certificate</td>
-                        <td style="text-align: center; height: 35px; width: 233px;">
+                        <td style="width: 100px; height: 35px;font-family: Calibri;"> Updated Certificate</td>
+                        <td style="text-align: center; height: 35px; width: 100px;font-family: Calibri;">
                         <b>CertName</b></td>
                     </tr>
                     <tr style="height: 39px; border: 1px solid #008080">
-                        <td style="width: 100px; height: 35px">  New Expiration Time</td>
-                        <td style="text-align: center; height: 35px; width: 233px;">
+                        <td style="width: 100px; height: 35px;font-family: Calibri;">  New Expiration Time</td>
+                        <td style="text-align: center; height: 35px; width: 100px; font-family: Calibri;">
                         <b>NewExpTime</b></td>
                     </tr>
                 </table>
