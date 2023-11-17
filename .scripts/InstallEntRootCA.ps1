@@ -20,7 +20,10 @@ Param
     [String]$demoCertDNSName,
 
     [Parameter(Mandatory=$true)]
-    [String]$keyVaultName
+    [String]$keyVaultName,
+
+    [Parameter(Mandatory=$true)]
+    [String]$Recipient
 )
 
 #region modules
@@ -61,7 +64,7 @@ if (!($WindowsPrincipal.IsInRole('Enterprise Admins')))
 #endregion checks
  
 #region install required roles and features
-Install-WindowsFeature -Name ADCS-Cert-Authority,ADCS-Enroll-Web-Pol,ADCS-Enroll-Web-Svc -IncludeManagementTools
+Install-WindowsFeature -Name ADCS-Cert-Authority,ADCS-Enroll-Web-Pol,ADCS-Enroll-Web-Svc,SMTP-Server,Web-Mgmt-Console,WEB-WMI -IncludeManagementTools
 #endregion install required roles and features
  
 #region Install Enterprise Root CA
@@ -249,6 +252,15 @@ Get-ChildItem -Path  "cert:\localMachine\my\$($cert.Certificate.Thumbprint)" | E
 Connect-AzAccount -Identity
 
 # Import the certificate into Azure KeyVault
-Import-AzKeyVaultCertificate -VaultName $keyVaultName -Name $certificateName -FilePath $pfxFilePath -Password $pfxPassword
+$newCert = Import-AzKeyVaultCertificate -VaultName $keyVaultName -Name $certificateName -FilePath $pfxFilePath -Password $pfxPassword
+
+#Set the recipient tag
+$tag =  @{"recipient" = $Recipient}
+$newCert | Update-AzKeyVaultCertificate -Tag $tag
 
 #endregion export the PFX certificate to the keyvault
+
+# configure SMTP server
+
+#endregion configure SMTP server
+```

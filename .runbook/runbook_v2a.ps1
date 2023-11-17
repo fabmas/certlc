@@ -124,7 +124,7 @@ try {
         Write-Output "Recipient: $Recipient"
         # Import the new certificate in the Key Vault
         try {
-            $tag =  @{recipient = $Recipient}
+           
             $newCert = Import-AzKeyVaultCertificate -VaultName $VaultName -Name $ObjectName -FilePath $tempFile 
         } catch {
             Write-Error "Error importing certificate to Key Vault: $_"
@@ -134,7 +134,7 @@ try {
         # Send notification email to recipient
         if ($null -ne $Recipient){
             try {
-                
+                $tag =  @{recipient = $Recipient}
                 $newCert | Update-AzKeyVaultCertificate -Tag $tag
                 #Get Date
                 $MailDate = Get-Date -format "MM-dd-yyyy"

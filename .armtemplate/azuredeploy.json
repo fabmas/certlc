@@ -144,6 +144,13 @@
             "type": "string"
         },
 
+        "Recipient": {
+            "metadata": {
+                "description": "Email address of the recipient of the certificate expiration notification"
+            },
+            "type": "String",
+            "defaultValue": "john.doe@demo.com",
+
 
         "WebhookExpiryTime": {
             "type": "string",
@@ -498,7 +505,8 @@
                         "CDPURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
                         "WebenrollURL": "[concat('http://',parameters('CAvmName'),'.',parameters('DomainName'))]",
                         "demoCertDNSName": "[concat('democert.',parameters('DomainName'))]",
-                        "keyvaultName": "[parameters('KeyvaultName')]"
+                        "keyvaultName": "[parameters('KeyvaultName')]",
+                        "Recipient": "[parameters('Recipient')]"
                     }
                 },
                 "protectedSettings": {
@@ -610,7 +618,7 @@
                 "logActivityTrace": 0,
                 "description": "Certificate Lifecycle Management",
                  "publishContentLink": {
-                    "uri": "https://raw.githubusercontent.com/fabmas/certlc/main/.runbook/runbook_v2.ps1",
+                    "uri": "https://raw.githubusercontent.com/fabmas/certlc/main/.runbook/runbook_v2a.ps1",
                     "version": "2.1.0.0"
                 }
             }
