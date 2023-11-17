@@ -260,7 +260,42 @@ $newCert | Update-AzKeyVaultCertificate -Tag $tag
 
 #endregion export the PFX certificate to the keyvault
 
-# configure SMTP server
+# configure SMTP server "alias domain" named demo.com in smtp server 
 
+    $incomingEMailDomainName = "demo.com"
+    # Write-Host -Foregroundcolor White " -> Creating incoming SMTP domain..."
+       # First create a new smtp domain. The path 'SmtpSvc/1' is the first virtual SMTP server. If you need to modify another virtual SMTP server
+       # change the path accordingly.
+       try
+       {
+             $smtpDomains = [wmiclass]'root\MicrosoftIISv2:IIsSmtpDomain'
+             $newSMTPDomain = $smtpDomains.CreateInstance()
+             $newSMTPDomain.Name = "SmtpSvc/1/Domain/$incomingEMailDomainName"
+             $newSMTPDomain.Put()  | Out-Null
+             #Write-Host -Foregroundcolor Green " [OK] Successfully created incoming email domain."
+       }
+       catch
+       {
+             #Write-Host -Foregroundcolor Red " [Error] Unable to create incoming email domain."
+             Exit
+       }
+       #Write-Host -Foregroundcolor White " -> Configuring incoming SMTP domain..."
+       try
+       {
+             # Configure the new smtp domain as alias domain
+             $smtpDomainSettings = [wmiclass]'root\MicrosoftIISv2:IIsSmtpDomainSetting'
+             $newSMTPDomainSetting = $smtpDomainSettings.CreateInstance()
+             # Set the type of the domain to "Alias"
+             $newSMTPDomainSetting.RouteAction = 16
+             # Map the settings to the domain we created in the first step
+             $newSMTPDomainSetting.Name = "SmtpSvc/1/Domain/$incomingEMailDomainName"
+             $newSMTPDomainSetting.Put() | Out-Null
+             #Write-Host -Foregroundcolor Green " [OK] Successfully configured incoming email domain."
+       }
+       catch
+       {
+             #Write-Host -Foregroundcolor Red " [Error] Unable to configure incoming e-mail domain."
+             Exit
+       }
 #endregion configure SMTP server
 ```
