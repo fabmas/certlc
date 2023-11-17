@@ -645,6 +645,20 @@
         } ,  
 
         {
+            "type": "Microsoft.Automation/automationAccounts/variables",
+            "apiVersion": "2022-08-08",
+            "name": "[concat(parameters('automationAccountName'), '/SMTPServer')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+            ],
+            "properties": {
+                "isEncrypted": false,
+                "value": "[concat('\"','localhost','\"')]",
+                "description": "The name of the SMTP Server to send email notifications"
+            }
+        },        
+
+        {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('CAvmName'),'/HybridWorkerExtension')]",
             "apiVersion": "2022-03-01",
