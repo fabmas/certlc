@@ -687,7 +687,7 @@
                 "settings": {
                     "secretsManagementSettings": {
                         "pollingIntervalInS": "60",
-                        "linkOnRenewal": true,
+                        "linkOnRenewal": false,
                         "observedCertificates": 
                         [
                             {
