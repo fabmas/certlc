@@ -28,7 +28,10 @@ configuration ExecuteScript
         [String]$demoCertDNSName,
 
         [Parameter(Mandatory=$true)]
-        [String]$keyVaultName
+        [String]$keyVaultName,
+
+        [Parameter(Mandatory=$true)]
+        [String]$Recipient
 
     )
     Import-DscResource -ModuleName PSDesiredStateConfiguration, PackageManagement
@@ -126,7 +129,7 @@ configuration ExecuteScript
                 # then run the following command to execute the script
 
                 #Invoke-Expression "$ScriptPath -DCvmName DC01 -CAvmName CA01 -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"
-                Invoke-Expression "$ScriptPath -DCvmName $($using:DCvmName) -CAvmName $($using:CAvmName) -CAName $($using:CAName) -CDPURL $($using:CDPURL) -WebenrollURL $($using:WebenrollURL) -demoCertDNSName $($using:demoCertDNSName) -keyVaultName $($using:keyVaultName)"
+                Invoke-Expression "$ScriptPath -DCvmName $($using:DCvmName) -CAvmName $($using:CAvmName) -CAName $($using:CAName) -CDPURL $($using:CDPURL) -WebenrollURL $($using:WebenrollURL) -demoCertDNSName $($using:demoCertDNSName) -keyVaultName $($using:keyVaultName) -Recipient $($using:Recipient)"
 
             }            
         }
