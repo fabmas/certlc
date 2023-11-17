@@ -1,0 +1,35 @@
+x-sender: clc@demo.com
+x-receiver: pluto@demo.com
+Received: from ca01 ([127.0.0.1]) by ca01.demo.local with Microsoft SMTPSVC(10.0.20348.1);
+	 Tue, 14 Nov 2023 22:41:47 +0000
+MIME-Version: 1.0
+From: "Certificate LifeCycle Automation" <clc@demo.com>
+To: pluto@demo.com
+Date: 14 Nov 2023 22:41:47 +0000
+Subject: Certificate democert renewed
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Return-Path: clc@demo.com
+Message-ID: <ca01rwNo3nt6QkUVIkg00000015@ca01.demo.local>
+X-OriginalArrivalTime: 14 Nov 2023 22:41:47.0534 (UTC) FILETIME=[C03202E0:01DA174B]
+
+                <table style=3D"width: 50%" style=3D"border-colla=
+pse: collapse; border: 1px solid #008080;">=0D=0A                =
+    <tr>=0D=0A                        <td colspan=3D"2" bgcolor=3D=
+"#008080" style=3D"color: #FFFFFF; font-size: large; font-family:=
+ Calibri; height: 35px;">=0D=0A                            Certif=
+icate LifeCycle Automation - Certificate Update Notification 11-1=
+4-2023=0D=0A                        </td>=0D=0A                  =
+  </tr>=0D=0A                    <tr style=3D"border-bottom-style=
+: solid; border-bottom-width: 1px; padding-bottom: 1px">=0D=0A   =
+                     <td style=3D"width: 100px; height: 35px"> Up=
+dated Certificate</td>=0D=0A                        <td style=3D"=
+text-align: center; height: 35px; width: 233px;">=0D=0A          =
+              <b>democert</b></td>=0D=0A                    </tr>=
+=0D=0A                    <tr style=3D"height: 39px; border: 1px =
+solid #008080">=0D=0A                    <td style=3D"width: 100p=
+x; height: 35px">  New Expiration Time</td>=0D=0A                =
+    <td style=3D"text-align: center; height: 35px; width: 233px;"=
+>=0D=0A                        <b>11/14/2023 22:31:43</b></td>=0D=0A=
+                    </tr>=0D=0A                </table>
+
