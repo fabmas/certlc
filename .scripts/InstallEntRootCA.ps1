@@ -298,4 +298,4 @@ $newCert | Update-AzKeyVaultCertificate -Tag $tag
              Exit
        }
 #endregion configure SMTP server
-```
+
