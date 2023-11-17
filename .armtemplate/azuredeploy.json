@@ -149,7 +149,8 @@
                 "description": "Email address of the recipient of the certificate expiration notification"
             },
             "type": "String",
-            "defaultValue": "john.doe@demo.com",
+            "defaultValue": "john.doe@demo.com"
+        },
 
 
         "WebhookExpiryTime": {
