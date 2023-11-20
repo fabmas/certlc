@@ -1,20 +1,3 @@
-#Articolidi riferimento 
-# (per Windows): https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows
-# (per Linux):https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux
-# (per ARC): https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739
-
-#Salvare il certificato (e non il secret) all'interno di "Certificate" nel keyvault
-#Seegnare all'identity delle VM o al service principal della ARCMachine i ruoli di "Key Vault Secrets User" sul keyVault
-
-Connect-AzAccount -TenantId 16b3c013-d300-468d-ac64-7eda0820b6d3 -Subscription fabmas-azure
-Connect-AzAccount -TenantId 1912158f-712f-400e-819d-8498b1ad6f85 -Subscription ME-MngEnv999102-angelom-1
-Connect-AzAccount -TenantID 5d64871e-f8ee-48b9-8653-6ac7999b3967 -Subscription vs-famasci
-
-#Prendere il SecretID SENZA LA VERSIONE a partire dal certificato all'interno del keyvault
-Get-AzKeyVaultCertificate -VaultName "fabmas-DEMO-KV-02" -name democert | select SecretID
-
-#Nel file Json per la configurazione dell'extension specificare il SecretID (es:https://pv-kv01.vault.azure.net:443/secrets/prova-PFX)
-
 
 # Build settings on Windows VM
 $settings = (get-content -raw ".\kvextensionwin.json")
@@ -120,68 +103,5 @@ $webhookURI = "https://1af729e4-f610-4e9a-abe5-a8e623eafc95.webhook.we.azure-aut
 #fabmas
 $webhookURI = "https://1af729e4-f610-4e9a-abe5-a8e623eafc95.webhook.we.azure-automation.net/webhooks?token=KZZ6W2YIbytll07%2fpaJMMkGLmZ1OiABVL4rQo2yns78%3d"
 
-
 $response = Invoke-WebRequest -Method Post -Uri $webhookURI -Headers $Headers -Body $body -UseBasicParsing
 $response
-
-################################
-# COPIA SNAPSHOTS SU Storage Account IN ALTRA SOTTOSCRIZIONE
-azcopy copy "https://md-nv2vhkz3glvq.z1.blob.storage.azure.net/fnml0nf1v4ql/abcd?sv=2018-03-28&sr=b&si=b6eb74ba-13b6-45fa-a56d-b7536320c651&sig=S46gmGTVtACsVYKcVjgai9o%2BD85JRCxAKHS0VsrewW0%3D" "https://famascitmp.blob.core.windows.net/snapshots/pv-osdisk1.vhd?sp=racwdl&st=2023-10-23T06:26:46Z&se=2023-10-23T14:26:46Z&spr=https&sv=2022-11-02&sr=c&sig=CNf1Z6KkzEbQ2x8GZ6swDwBQUcciR3KJDPymoGPGYzI%3D"
-
-#CREAZIONE DISCHI
-# Provide the subscription Id where the VHD is stored
-$subscriptionId = "0f3f9511-aa31-4981-a283-f6bb651546d7"
-# Set the context to the subscription Id where VHD is stored
-az account set --subscription $subscriptionId
-
-
-# Provide the URL of the VHD in the storage account
-$vhdUrl = "https://famascitmp.blob.core.windows.net/snapshots/pv-os.vhd"
-
-# Provide the location (i.e., Azure region)
-$location = "westeurope"
-
-# Provide the name of the OS disk
-$osDiskName = "pv-DC01-OS"
-
-
-# Create OS disk from the VHD
-az disk create --resource-group $resourceGroupName --name $osDiskName --source $vhdUrl --location $location --os-type Windows --hyper-v-generation V2
-
-#Create Data Disk
-az disk create --resource-group $resourceGroupName --name $diskName --source  $vhdUrl --sku Standard_LRS
-
-
-
-
-
-##########
-Set-AzVMExtension -ResourceGroupName "Poste-Vita" -VMName "pv-dc01" -Location "westeurope" -Publisher "Microsoft.Azure.Security.MDE" -ExtensionType "MDE.Windows" -TypeHandlerVersion "1.0" -Name "DefenderForEndpoint"
-
-
-
-
-$temp = "Template=1.3.6.1.4.1.311.21.8.13172761.5506148.3097506.3378869.1791674.67.38881081.92656882, Major Version Number=100, Minor Version Number=3"
-write-output "temp = $temp"
-$oid=$null
-$substring = $temp -match '\((.*?)\)' | Out-Null
-if ($matches -ne $null -and $matches.Count -gt 0) {
-    $oid = $matches[1]
-    write-output "OID1 = $oid"
-} 
-
-if ($oid -eq $null) {
-    $split = $temp -split ","
-    $template = $split[0]
-    $templateSplit = $template -split "="
-    $oid = $templateSplit[1]
-    write-output "OID2 = $oid"
-}
-
-if ($oid -eq $null) {
-    $pattern = 'Template=([\d.]+)'
-    if ($temp -match $pattern) {
-        $oid = $matches[1]
-        write-output "OID3 = $oid"
-    } 
-}
