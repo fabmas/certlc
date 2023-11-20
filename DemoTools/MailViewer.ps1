@@ -89,7 +89,7 @@ function ConvertFrom-EmlToHtml {
 
 # Create form
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "EML to HTML Converter"
+$form.Text = "Mail Viewer"
 $form.Size = New-Object System.Drawing.Size(800, 400)
 $form.FormBorderStyle = "FixedDialog"
 $form.StartPosition = "CenterScreen"
@@ -104,12 +104,12 @@ $form.Controls.Add($webBrowser)
 $button = New-Object System.Windows.Forms.Button
 $button.Location = New-Object System.Drawing.Point(10, 10)
 $button.Size = New-Object System.Drawing.Size(100, 30)
-$button.Text = "Upload EML"
+$button.Text = "Open EML"
 $button.Add_Click({
     $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
     $openFileDialog.Filter = "EML files (*.eml)|*.eml"
     $openFileDialog.Title = "Select an EML File"
-    $openFileDialog.InitialDirectory = "c:\inetpub\mailroot\drop"
+    $openFileDialog.InitialDirectory = "C:\inetpub\mailroot\drop"
 
     $dialogResult = $openFileDialog.ShowDialog()
     if ($dialogResult -eq "OK") {
