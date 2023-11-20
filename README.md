@@ -13,7 +13,7 @@ Before delving into details of the automated renewal process, let's take a brief
 
 *Download a [Visio file](./.media/certlc.vsdx) of this architecture.*
 
-The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a Key Vault, an Event Grid System topic, and an Automation Account exposing a webhook targeted by the Event Grid. It is assumed that an existing Public Key Infrastructure (PKI) infrastructure, consisting of an Enterprise Certification Authority joined to an Active Directory domain, is already in place for this scenario.
+The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a **Key Vault**, an **Event Grid System topic**, and an **Automation Account** exposing a webhook targeted by the Event Grid. It is assumed that an existing Public Key Infrastructure (PKI) infrastructure, consisting of a Microsoft Enterprise Certification Authority joined to an Active Directory domain, is already in place for this scenario.
 
 > [!NOTE]
 > ***aggiungere da qualche parte che una volta scaricato il certificato sul client, deve essere rifatto il binding con il servizio che lo usa ad esempio IIS***
@@ -28,8 +28,8 @@ The automated workflow for certificate renewal within the Azure ecosystem is a w
 1. **Key Vault Configuration:**
 The process begins with the certificates residing within the Key Vault. The servers that need to utilize these certificates are equipped with the Key Vault extension, a versatile tool compatible with Windows and Linux both Azure-based (IaaS) servers and on-premises servers integrated through Azure ARC.
 
-1. **Extension Configuration:**
-The Key Vault extension is configured to periodically poll the Key Vault for any updated certificates. This polling interval is customizable, allowing flexibility to align with specific operational requirements.
+1. **Key Vault Extension Configuration:**
+The Key Vault extension is configured, on the server binding the certificate, to periodically poll the Key Vault for any updated certificates. This polling interval is customizable, allowing flexibility to align with specific operational requirements.
 
 1. **Event Grid and Automation Account Integration:**
 The Event Grid, actively monitoring certificates nearing expiration, intercepts this event. Upon detection, the Event Grid triggers the execution of a runbook through the webhook configured in the Automation Account.
