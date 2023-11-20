@@ -126,6 +126,9 @@ configuration ExecuteScript
                 $ScriptURL="https://raw.githubusercontent.com/fabmas/certlc/main/.scripts/InstallEntRootCA.ps1"
                 Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
 
+                #Copy the utility to view the .eml file
+                Invoke-WebRequest -uri "https://raw.githubusercontent.com/fabmas/certlc/main/.DemoTools/MailViewer.ps1" -OutFile "$ScriptFolder\Mailviewer.ps1"
+
                 # then run the following command to execute the script
 
                 #Invoke-Expression "$ScriptPath -DCvmName DC01 -CAvmName CA01 -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"

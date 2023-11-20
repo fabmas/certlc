@@ -37,10 +37,9 @@ function ConvertFrom-EmlToHtml {
                 return
             }
 
-            # Do not try to overwrite existing files
+            # Manage existing files
             if (Test-Path -LiteralPath $htmlFn) {
                 Write-Verbose "Skipping $_ (.html already exists)..."
-                #delete the file
                 Remove-Item -LiteralPath $htmlFn -Force
             }
 
@@ -63,7 +62,7 @@ function ConvertFrom-EmlToHtml {
             $html += "<body style=`"font-family: sans-serif; font-size: 11pt`">`r`n"
             $html += "<div style=`"margin-bottom: 1em;`">`r`n"
             $html += "<strong>From: </strong>" + $cdoMessage.From + "<br>`r`n"
-            $html += "<strong>Sent: </strong>" + $cdoMessage.SentOn + "<br>`r`n"
+            $html += "<strong>Sent: </strong>" + $($cdoMessage.SentOn).ToString("dd/MM/yyyy HH:mm:ss") + "<br>`r`n"
             $html += "<strong>To: </strong>" + $cdoMessage.To + "<br>`r`n"
             if ($cdoMessage.CC -ne "") {
                 $html += "<strong>Cc: </strong>" + $cdoMessage.CC + "<br>`r`n"
@@ -116,6 +115,7 @@ $button.Add_Click({
     $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
     $openFileDialog.Filter = "EML files (*.eml)|*.eml"
     $openFileDialog.Title = "Select an EML File"
+    $openFileDialog.InitialDirectory = "c:\inetpub\mailroot\drop"
 
     $dialogResult = $openFileDialog.ShowDialog()
     if ($dialogResult -eq "OK") {

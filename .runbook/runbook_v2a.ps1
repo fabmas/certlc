@@ -137,7 +137,7 @@ try {
                 $tag =  @{recipient = $Recipient}
                 $newCert | Update-AzKeyVaultCertificate -Tag $tag
                 #Get Date
-                $MailDate = Get-Date -format "MM-dd-yyyy"
+                $MailDate = Get-Date -format "dd/MM/yyyy"
                 
                 #Configuration Variables for E-mail
                 $SmtpServer = Get-AutomationVariable -Name 'SMTPserver'
@@ -147,28 +147,28 @@ try {
                 $EmailSubject = "Certificate $ObjectName renewed"
                 #HTML Template
                 $EmailBody = @"
-                <table style="width: 50%" style="border-collapse: collapse; border: 1px solid #008080;">
+                <table style="width: 90%" style="border-collapse: collapse; border: 1px solid #008080;">
                     <tr>
                         <td colspan="2" bgcolor="#008080" style="color: #FFFFFF; font-size: large; font-family: Calibri; height: 35px;">
                             Certificate LifeCycle Automation - Certificate Update Notification Maildate
                         </td>
                     </tr>
                     <tr style="border-bottom-style: solid; border-bottom-width: 1px; padding-bottom: 1px">
-                        <td style="width: 100px; height: 35px;font-family: Calibri;"> Updated Certificate</td>
-                        <td style="text-align: center; height: 35px; width: 100px;font-family: Calibri;">
+                        <td style="width: 500px; height: 35px;font-family: Calibri;"> Updated Certificate</td>
+                        <td style="text-align: center; height: 35px; width: 200px;font-family: Calibri;">
                         <b>CertName</b></td>
                     </tr>
                     <tr style="height: 39px; border: 1px solid #008080">
-                        <td style="width: 100px; height: 35px;font-family: Calibri;">  New Expiration Time</td>
-                        <td style="text-align: center; height: 35px; width: 100px; font-family: Calibri;">
+                        <td style="width: 500px; height: 35px;font-family: Calibri;">  New Expiration Time</td>
+                        <td style="text-align: center; height: 35px; width: 200px; font-family: Calibri;">
                         <b>NewExpTime</b></td>
                     </tr>
                 </table>
 "@
 
                 $EmailBody= $EmailBody.Replace("CertName",$ObjectName)
-                $EmailBody= $EmailBody.Replace("Maildate",$Maildate)
-                $EmailBody= $EmailBody.Replace("NewExpTime",$newCert.certificate.NotAfter)
+                $EmailBody= $EmailBody.Replace("Maildate",$Maildate.ToString("dd/MM/yyyy HH:mm:ss"))
+                $EmailBody= $EmailBody.Replace("NewExpTime",$($newCert.certificate.NotAfter).ToString("dd/MM/yyyy HH:mm:ss"))
                 
                 #Send E-mail from PowerShell script
                 Send-MailMessage -To $EmailTo -From $EmailFrom -Subject $EmailSubject -Body $EmailBody -BodyAsHtml -SmtpServer $SmtpServer
