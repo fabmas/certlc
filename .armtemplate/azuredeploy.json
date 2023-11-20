@@ -39,6 +39,7 @@
         },        
         "DomainName": {
             "type": "string",
+            "defaultValue": "demo.com",
             "metadata": {
                 "description": "The FQDN of the Active Directory Domain to be created"
             }
