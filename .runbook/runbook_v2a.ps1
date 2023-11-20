@@ -142,6 +142,7 @@ try {
                 #Configuration Variables for E-mail
                 $SmtpServer = Get-AutomationVariable -Name 'SMTPserver'
                 $EmailFrom = "Certificate LifeCycle Automation <clc@demo.com>"
+                $Recipient = $Recipient.Replace(";",",")
                 $Recipient = $Recipient.split(",") #convert to array of comma separated recipients
                 $EmailTo = $Recipient 
                 $EmailSubject = "Certificate $ObjectName renewed"
