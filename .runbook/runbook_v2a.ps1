@@ -167,7 +167,7 @@ try {
 "@
 
                 $EmailBody= $EmailBody.Replace("CertName",$ObjectName)
-                $EmailBody= $EmailBody.Replace("Maildate",$Maildate.ToString("dd/MM/yyyy HH:mm:ss"))
+                $EmailBody= $EmailBody.Replace("Maildate",$Maildate)
                 $EmailBody= $EmailBody.Replace("NewExpTime",$($newCert.certificate.NotAfter).ToString("dd/MM/yyyy HH:mm:ss"))
                 
                 #Send E-mail from PowerShell script
