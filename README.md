@@ -22,32 +22,36 @@ The Azure environment in question comprises the following Platform as a Service 
 
 The automated workflow for certificate renewal within the Azure ecosystem is a well-coordinated process, ensuring the timely and secure update of certificates across servers, whether on Azure (IaaS) or on-premises servers integrated through Azure ARC.
 
-> [NOTE]
-> inserire una figura con freccette che illustrano workflow
+![workflow](./.media/workflow.png)
 
 1. **Key Vault Configuration:**
-The process begins with the certificates residing within the Key Vault. The servers that need to utilize these certificates are equipped with the Key Vault extension, a versatile tool compatible with Windows and Linux both Azure-based (IaaS) servers and on-premises servers integrated through Azure ARC.
+The process begins with the certificates residing within the Key Vault. The servers that need to utilize these certificates are equipped with the Key Vault extension, a versatile tool compatible with *Windows* and *Linux* both Azure-based (IaaS) servers and on-premises servers integrated through *Azure ARC*. The certificate should be tagged with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 
 1. **Key Vault Extension Configuration:**
 The Key Vault extension is configured, on the server binding the certificate, to periodically poll the Key Vault for any updated certificates. This polling interval is customizable, allowing flexibility to align with specific operational requirements.
 
 1. **Event Grid and Automation Account Integration:**
-The Event Grid, actively monitoring certificates nearing expiration, intercepts this event. Upon detection, the Event Grid triggers the execution of a runbook through the webhook configured in the Automation Account.
+When the certificate is near to exipre, the Event Grid intercepts this event. Upon detection, the Event Grid triggers the execution of a runbook through the webhook configured in the Automation Account.
 
 1. **Hybrid Runbook Worker Execution:**
-The runbook, executed within the Certification Authority configured as a Hybrid Runbook Worker, takes as input the webhook body containing the name of the expiring certificate and the Key Vault hosting it.
-
-1. **Certificate Template Retrieval:**
+The runbook, executed within the Certification Authority configured as a Hybrid Runbook Worker, takes as input the webhook body containing the name of the expiring certificate and the Key Vault hosting it. 
 Leveraging Azure connectivity, the script within the runbook connects to Azure to retrieve the certificate's template name used during its generation.
-
-1. **Certificate Renewal Request:**
 Subsequently, the script interfaces with the Key Vault, initiating a certificate renewal request. This request results in the generation of a Certificate Signing Request (CSR).
 
-1. **CSR Processing and Certificate Generation:**
-The script downloads the CSR and submits it to the Certification Authority, generating a new certificate based on the correct template. This ensures that the renewed certificate aligns with the predefined security policies.
+1. **Runbook start certification authority renewal process:**
+The script downloads the CSR and submits it to the Certification Authority.
+
+1. **Certificate renewal:**
+ The Certification authority generate a new certificate based on the correct template and send it back to the script. This ensures that the renewed certificate aligns with the predefined security policies.
 
 1. **Certificate Import and Key Vault Update:**
-The script imports the renewed certificate back into the Key Vault, finalizing the update process. The Key Vault extension plays a pivotal role in this phase by automatically downloading the latest version of the certificate into the local store of the server utilizing it.
+The script imports the renewed certificate back into the Key Vault, finalizing the update process. 
+
+1. **E-mail notification:**
+A the same time, the script sends an e-mail notification to the administrator, informing them of the successful renewal of the certificate.
+
+1. **Certificate retrieval:**
+The Key Vault extension running on the server plays a pivotal role in this phase by automatically downloading the latest version of the certificate from the Key Vault into the local store of the server utilizing it.
 
 
 ## Components
