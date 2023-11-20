@@ -129,9 +129,19 @@ configuration ExecuteScript
                 #Copy the utility to view the .eml file
                 Invoke-WebRequest -uri "https://raw.githubusercontent.com/fabmas/certlc/main/.DemoTools/MailViewer.ps1" -OutFile "$ScriptFolder\Mailviewer.ps1"
 
-                # then run the following command to execute the script
+                #add link to default desktop
+                $desktopPath = 'C:\Users\Public\Desktop'
+                $shortcutPath = Join-Path $desktopPath 'MailViewer.lnk'
+                
+                $WshShell = New-Object -comObject WScript.Shell
+                $Shortcut = $WshShell.CreateShortcut($shortcutPath)
+                $Shortcut.TargetPath = "powershell.exe"
+                $Shortcut.Arguments = " -WindowStyle Hidden -ExecutionPolicy Bypass -File $ScriptFolder\Mailviewer.ps1"
+                $iconPath = "$env:SystemRoot\explorer.exe,13"  # 13 is the index of the mail icon
+                $Shortcut.IconLocation = $iconPath
+                $Shortcut.Save()
 
-                #Invoke-Expression "$ScriptPath -DCvmName DC01 -CAvmName CA01 -CAName DEMOCA -CDPURL http://ca01.demo.local -WebenrollURL http://ca01.demo.local -demoCertDNSName prova.democa.local"
+                # then run the following command to execute the script
                 Invoke-Expression "$ScriptPath -DCvmName $($using:DCvmName) -CAvmName $($using:CAvmName) -CAName $($using:CAName) -CDPURL $($using:CDPURL) -WebenrollURL $($using:WebenrollURL) -demoCertDNSName $($using:demoCertDNSName) -keyVaultName $($using:keyVaultName) -Recipient $($using:Recipient)"
 
             }            

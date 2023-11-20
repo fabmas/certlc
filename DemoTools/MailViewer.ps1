@@ -29,18 +29,11 @@ function ConvertFrom-EmlToHtml {
         $files | % {
             # Work out file names
             $emlFn  = $_.FullName
-            $htmlFn = $emlFn -replace '\.eml$', '.html'
 
             # Skip non-.msg files
             if ($emlFn -notlike "*.eml") {
                 Write-Verbose "Skipping $_ (not an .eml file)..."
                 return
-            }
-
-            # Manage existing files
-            if (Test-Path -LiteralPath $htmlFn) {
-                Write-Verbose "Skipping $_ (.html already exists)..."
-                Remove-Item -LiteralPath $htmlFn -Force
             }
 
             # Read EML
@@ -84,12 +77,7 @@ function ConvertFrom-EmlToHtml {
             $html += "</body>`r`n"
             $html += "</html>`r`n"
 
-            # Write HTML
-            Write-Verbose "Saving HTML..."
-            Add-Content -LiteralPath $htmlFn $html
-
-            # Output to pipeline
-            Get-ChildItem -LiteralPath $htmlFn
+            return $html
         }
     }
 
@@ -105,6 +93,12 @@ $form.Text = "EML to HTML Converter"
 $form.Size = New-Object System.Drawing.Size(800, 400)
 $form.FormBorderStyle = "FixedDialog"
 $form.StartPosition = "CenterScreen"
+
+# Create web browser control
+$webBrowser = New-Object System.Windows.Forms.WebBrowser
+$webBrowser.Location = New-Object System.Drawing.Point(10, 50)
+$webBrowser.Size = New-Object System.Drawing.Size(760, 300)
+$form.Controls.Add($webBrowser)
 
 # Create button for file selection
 $button = New-Object System.Windows.Forms.Button
@@ -122,19 +116,13 @@ $button.Add_Click({
         $emlFilePath = $openFileDialog.FileName
 
         # Convert EML to HTML
-        $htmlFile = ConvertFrom-EmlToHtml -Path $emlFilePath
+        $html = ConvertFrom-EmlToHtml -Path $emlFilePath
 
         # Display HTML in the web browser
-        $webBrowser.Navigate($htmlFile.FullName)
+        $webbrowser.DocumentText = $html
     }
 })
 $form.Controls.Add($button)
-
-# Create web browser control
-$webBrowser = New-Object System.Windows.Forms.WebBrowser
-$webBrowser.Location = New-Object System.Drawing.Point(10, 50)
-$webBrowser.Size = New-Object System.Drawing.Size(760, 300)
-$form.Controls.Add($webBrowser)
 
 # Show form
 $form.ShowDialog() | Out-Null
