@@ -25,24 +25,24 @@ The automated workflow for certificate renewal within the Azure ecosystem is a w
 ![workflow](./.media/workflow.png)
 
 1. **Key Vault Configuration:**
-The process begins with the certificates residing within the Key Vault. The servers that need to utilize these certificates are equipped with the Key Vault extension, a versatile tool compatible with *Windows* and *Linux* both Azure-based (IaaS) servers and on-premises servers integrated through *Azure ARC*. The certificate should be tagged with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
+The process begins with the certificates residing within the Key Vault. The certificate should be tagged with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 
 1. **Key Vault Extension Configuration:**
-The Key Vault extension is configured, on the server binding the certificate, to periodically poll the Key Vault for any updated certificates. This polling interval is customizable, allowing flexibility to align with specific operational requirements.
+The servers that need to utilize these certificates are equipped with the Key Vault extension, a versatile tool compatible with *Windows* and *Linux* both Azure-based (IaaS) servers and on-premises servers integrated through *Azure ARC*. The Key Vault extension is configured to periodically poll the Key Vault for any updated certificates. This polling interval is customizable, allowing flexibility to align with specific operational requirements.
 
 1. **Event Grid and Automation Account Integration:**
-When the certificate is near to exipre, the Event Grid intercepts this event. Upon detection, the Event Grid triggers the execution of a runbook through the webhook configured in the Automation Account.
+When the certificate is near to expire, the Event Grid intercepts this event. Upon detection, the Event Grid triggers the execution of a RunBook through the webhook configured in the Automation Account.
 
-1. **Hybrid Runbook Worker Execution:**
-The runbook, executed within the Certification Authority configured as a Hybrid Runbook Worker, takes as input the webhook body containing the name of the expiring certificate and the Key Vault hosting it. 
-Leveraging Azure connectivity, the script within the runbook connects to Azure to retrieve the certificate's template name used during its generation.
-Subsequently, the script interfaces with the Key Vault, initiating a certificate renewal request. This request results in the generation of a Certificate Signing Request (CSR).
+1. **Hybrid RunBook Worker Execution:**
+    - The RunBook, executed within the Certification Authority configured as a Hybrid RunBook Worker, takes as input the webhook body containing the name of the expiring certificate and the Key Vault hosting it. 
+    - Leveraging Azure connectivity, the script within the RunBook connects to Azure to retrieve the certificate's template name used during its generation.
+    - Subsequently, the script interfaces with the Key Vault, initiating a certificate renewal request. This request results in the generation of a Certificate Signing Request (CSR).
 
-1. **Runbook start certification authority renewal process:**
+1. **RunBook start certification authority renewal process:**
 The script downloads the CSR and submits it to the Certification Authority.
 
 1. **Certificate renewal:**
- The Certification authority generate a new certificate based on the correct template and send it back to the script. This ensures that the renewed certificate aligns with the predefined security policies.
+ The Certification Authority generate a new certificate based on the correct template and send it back to the script. This ensures that the renewed certificate aligns with the predefined security policies.
 
 1. **Certificate Import and Key Vault Update:**
 The script imports the renewed certificate back into the Key Vault, finalizing the update process. 
@@ -56,6 +56,7 @@ The Key Vault extension running on the server plays a pivotal role in this phase
 
 ## Components
 bla bla bla 
+
 > [!NOTE]
 > + Inserire i macro passi come se dovessi implemenare la soluzione manualmente
 > + inserire qui anche gli aspetti di sicurezza e gli eventuali improvement con la Logic App oppure riferimento ad articolo per le chiamate autenticate con beerer verso il webhook 
@@ -66,13 +67,13 @@ The Key Vault Extension is a crucial component for automating certificate renewa
 > [!NOTE]
 > + inserire qualche esempio di quelli che abbiamo provato ?
 ### Automation Account
-The Automation Account acts as the orchestrator for the certificate renewal process. It needs to be configured with a runbook, and the PowerShell script for the runbook can be found [here](./.runbook/runbook_v2.ps1). Additionally, an Hybrid Worker Group must be created, associating it with the Certification Authority for executing runbooks. The runbook should have a webhook associated with it, initiated from the Hybrid Runbook Worker.
+The Automation Account acts as the orchestrator for the certificate renewal process. It needs to be configured with a RunBook, and the PowerShell script for the RunBook can be found [here](./.RunBook/RunBook_v2.ps1). Additionally, an Hybrid Worker Group must be created, associating it with the Certification Authority for executing RunBooks. The RunBook should have a webhook associated with it, initiated from the Hybrid RunBook Worker.
 
 > [!NOTE!]
-> inserire link su come si crea hybrid worker, runbook e webhook ???
+> inserire link su come si crea hybrid worker, RunBook e webhook ???
 
-### Hybrid runbook worker
-The Hybrid Runbook Worker plays a pivotal role in executing runbooks. It needs to be installed with the Key Vault Extension, which is the supported mode for the new installation. The Hybrid Runbook Worker should contain the Certification Authority, which can be either on Azure or on-premises.
+### Hybrid RunBook worker
+The Hybrid RunBook Worker plays a pivotal role in executing RunBooks. It needs to be installed with the Key Vault Extension, which is the supported mode for the new installation. The Hybrid RunBook Worker should contain the Certification Authority, which can be either on Azure or on-premises.
 
 ### Azure Key Vault
 Azure Key Vault is the secure repository for certificates. The Automation Account and the server requiring certificate access must be granted specific permissions within the Key Vault. The permission model should include 'Get' and 'List' permissions for the automation account and the server. Additionally, in the Event section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account.
