@@ -55,7 +55,7 @@ The Key Vault extension running on the server plays a pivotal role in this phase
 
 
 ## Components
-bla bla bla 
+The solution uses several components to allow smooth certificate renewal such as:
 
 > [!NOTE]
 > + Inserire i macro passi come se dovessi implemenare la soluzione manualmente
