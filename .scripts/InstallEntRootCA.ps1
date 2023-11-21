@@ -261,8 +261,8 @@ $newCert | Update-AzKeyVaultCertificate -Tag $tag
 #endregion export the PFX certificate to the keyvault
 
 # configure SMTP server "alias domain" named demo.com in smtp server 
-
-    $incomingEMailDomainName = "demo.com"
+    $incomingEMailDomainName = $recipient.Split("@")[1] # Set SMTP Domain Alias from Recipient specified in Arm deployment
+    # $incomingEMailDomainName = "demo.com"
     # Write-Host -Foregroundcolor White " -> Creating incoming SMTP domain..."
        # First create a new smtp domain. The path 'SmtpSvc/1' is the first virtual SMTP server. If you need to modify another virtual SMTP server
        # change the path accordingly.
