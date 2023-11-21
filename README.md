@@ -55,7 +55,7 @@ The Key Vault extension running on the server plays a pivotal role in this phase
 
 
 ## Components
-The solution uses several components to allow smooth certificate renewal such as:
+The solution uses several components to allow smooth certificate renewal: in the following chapters, each component and its purpose are explained in details.
 
 > [!NOTE]
 > + Inserire i macro passi come se dovessi implemenare la soluzione manualmente
