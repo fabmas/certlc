@@ -2,13 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "Location for all resources."
-            }
-        },
         "virtualNetworkAddressRange": {
             "type": "string",
             "defaultValue": "10.0.0.0/16",
@@ -44,7 +37,7 @@
                 "description": "The FQDN of the Active Directory Domain to be created"
             }
         },
-        "DomainAdminUsername": {
+        "DomainAdminUserName": {
             "type": "string",
             "defaultValue": "demoadmin",
             "metadata": {
@@ -58,21 +51,21 @@
             }
         },
 
-        "DCvmSize": {
+        "DcVmSize": {
             "type": "string",
             "defaultValue": "Standard_D2s_v3",
             "metadata": {
                 "description": "Size of the VM for the Domain Controller"
             }
         },
-        "DCvmName": {
+        "DcVmName": {
             "type": "string",
             "defaultValue": "dc01",
             "metadata": {
                 "description": "Domain Controller VM name."
             }
         },        
-        "DCprivateIPAddress": {
+        "DcPrivateIpAddress": {
             "type": "string",
             "defaultValue": "10.0.0.4",
             "metadata": {
@@ -80,7 +73,7 @@
             }
         },
 
-        "CAvmSize": {
+        "CaVmSize": {
             "type": "string",
             "defaultValue": "Standard_D2s_v3",
             "metadata": {
@@ -89,27 +82,27 @@
         },
 
 
-        "CAvmName": {
+        "CaVmName": {
             "type": "string",
             "defaultValue": "ca01",
             "metadata": {
                 "description": "Certificate Service VM name."
             }
             },        
-        "CAadminUsername": {
+        "CaAdminUsername": {
             "type": "string",
             "defaultValue": "caadmin",
             "metadata": {
                 "description": "The name of the administrator of the Certificate Service VM."
             }
         },
-        "CAadminPassword": {
+        "CaAdminPassword": {
             "type": "secureString",
             "metadata": {
                 "description": "The password for the administrator account of the Certificate Service VM."
             }
         },
-        "KeyvaultName": {
+        "KeyVaultName": {
             "metadata": {
                 "description": "UNIQUE name of the Key Vault resource"
             },
@@ -176,15 +169,15 @@
         "UniqueStringBasedOnTimeStamp": "[uniqueString(deployment().name, parameters('_CurrentDateTimeInTicks'))]",
         "DCnicName": "[concat(parameters('DCvmName'),'-nic')]",
         "DCpublicIPAddressName": "[concat(parameters('DCvmName'),'-ip')]",
-        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]"
-        
+        "CAnicName": "[concat(parameters('CAvmName'),'-nic')]",
+        "Location": "[resourceGroup().location]"
     },
     "resources": [
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2022-01-01",
             "name": "[variables('DCpublicIPAddressName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "properties": {
                 "publicIPAllocationMethod": "Static"
                 }
@@ -214,7 +207,7 @@
                         "value": "[parameters('subnetRange')]"
                     },
                     "location": {
-                        "value": "[parameters('location')]"
+                        "value": "[variables('location')]"
                     }
                 }
             }
@@ -223,7 +216,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2022-01-01",
             "name": "[variables('DCnicName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "VNet"
             ],
@@ -253,7 +246,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2023-03-01",
             "name": "[parameters('DCvmName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },            
@@ -310,7 +303,7 @@
                     "type": "extensions",
                     "apiVersion": "2022-03-01",
                     "name": "CreateADForest",
-                    "location": "[parameters('location')]",
+                    "location": "[variables('location')]",
                     "dependsOn": [
                         "[parameters('DCvmName')]"
                     ],
@@ -371,7 +364,7 @@
                         ]
                     },
                     "location": {
-                        "value": "[parameters('location')]"
+                        "value": "[variables('location')]"
                     }
                 }
             }
@@ -380,7 +373,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2021-02-01",
             "name": "[variables('CAnicName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "VNet",
                 "[variables('DCnicName')]"
@@ -403,7 +396,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2023-03-01",
             "name": "[parameters('CAvmName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },
@@ -458,7 +451,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2021-03-01",
             "name": "[format('{0}/{1}', parameters('CAvmName'), 'joindomain')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "properties": {
                 "publisher": "Microsoft.Compute",
                 "type": "JsonADDomainExtension",
@@ -524,7 +517,7 @@
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2023-02-01",
             "name": "[parameters('KeyvaultName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "VNet"
             ],
@@ -550,7 +543,7 @@
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2022-08-08",
             "name": "[parameters('AutomationAccountName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },
@@ -609,7 +602,7 @@
             "type": "Microsoft.Automation/automationAccounts/runbooks",
             "apiVersion": "2022-08-08",
             "name": "[concat(parameters('AutomationAccountName'), '/CertLifeCycleMgmt')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]"
@@ -663,7 +656,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('CAvmName'),'/HybridWorkerExtension')]",
             "apiVersion": "2022-03-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('CAvmName'))]",
@@ -689,7 +682,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name":  "[concat(parameters('DCvmName'),'/KeyVaultForWindows')]",
             "apiVersion": "2022-08-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('DCvmName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('CAvmName'), 'HybridWorkerExtension')]"
@@ -725,7 +718,7 @@
             "type": "Microsoft.EventGrid/systemTopics",
             "apiVersion": "2023-06-01-preview",
             "name": "[parameters('EventGridName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]"
             ],
