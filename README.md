@@ -17,6 +17,14 @@ The Azure environment in question comprises the following Platform as a Service 
 
 > [!NOTE]
 > ***aggiungere da qualche parte che una volta scaricato il certificato sul client, deve essere rifatto il binding con il servizio che lo usa ad esempio IIS***
+>   - ***aggiungere da qualche parte che una volta scaricato il certificato sul client, deve essere rifatto il binding con il servizio che lo usa ad esempio IIS***
+>   - ***aggiungere che più server possono essere configurati per ricevere lo stesso certificato dal K (es. tutti i server che usano lo stesso wildcard certificate***
+>   - ***aggiungere che certificati con SAN multipli sono gestiti nel processo implementato***
+>   - ***aggiungere è possibile impostare i permessi di "Key Vault Secret User" sul singolo certificato invece che sull'intero KV per il server*** 
+>   - ***aggiungere che si suppono già disponibile un servizio SMTP per implemetare la notifica via email***
+>   - ***aggiungere che il computer account della CA (configurata come Hybrid worker) deve avere i permessi di enrollment sui template dei certificati che si vuole rinnovare***
+>   - ***VALUTARE se aggiungere il tecnicismo dell'endpoint del secret associato al certificato sul keyvault che permette di salvare anche la chiave privata.***
+>   - ***VALUTARE se aggiungere che l'opzione "Link on renewal" per i server Windows permette di fare il binding automatico in caso di rinnovo, ma che suggeriamo di lasciare il flag a false per eseguire manualmente il processo di binding ***
 
 ## Workflow
 
