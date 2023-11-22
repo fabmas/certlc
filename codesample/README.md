@@ -59,9 +59,9 @@ Additional parameters needed for the deployment can be left to their default val
 ![Screenshot of a succeeded deployment](./.diagrams/SucceededDeployment.jpg)
 
 ## LAB environment description
-The LAB environment is designed to represent an in-depth technical overview of a comprehensive end-to-end certificate management workflow, which embodies the entire process described in the article [![articolo](about:blank)](http://insertlink.com).
+The LAB environment is designed to represent an in-depth technical overview of a comprehensive end-to-end certificate management workflow, which embodies the entire process described in the article [articolo](http://insertlink.com).
 
-The LAB environment is meticulously structured to showcase the seamless workflow, allowing for a complete demonstration of the automated certificate management process. Let's delve into the key components, shown below, constituting this environment:
+The LAB environment is structured to showcase the seamless workflow, allowing for a complete demonstration of the automated certificate management process. Let's delve into the key components, shown in the diagram below, constituting this environment:
 
 ![LAB Cert Life Cycle Architecture](./.diagrams/LAB_certlc_Architecture.jpg)
 
@@ -94,8 +94,15 @@ The LAB environment is meticulously structured to showcase the seamless workflow
     - Connects to the CA, requests a certificate with the previously obtained CSR, and presents it within the Key Vault to conclude the renewal process.
     - Sends emails to the identified recipients.
 
+    > [!NOTE]
+    > The RunBook performs the actions described above on Azure, using the System Managed Identity of the automation account, and inside the Certification Authority, using the system account (domain computer account) of the CA server.  To access the Azure Key Vault, the System Managed Identity of the automation account has been granted the "*Key Vault Certificate Officer*" role on the Key Vault.
+
+
 1. **Certificate Retrieval:**
     The DC01, configured as the server expecting the renewed certificate via the Key Vault extension, receives the certificate in its machine's personal certificate store after the polling period elapses.
+
+    > [!NOTE]
+    > To access the Azure Key Vault, the System Managed Identity of the DC01 virtual machine has been granted the "*Key Vault Secret User*" role on the Key Vault. 
 
 1. **Conclusion of the Demo:**
     At this stage, the demonstration concludes successfully.
@@ -132,7 +139,7 @@ The LAB is fully automated and requires no manual intervention. The following st
     
     ![Screenshot CA](./.diagrams/cert_renewal.png)
 
-    Open the MailViewer tool provided on the desktop end select the most recent ".eml" file. You should see the email sent by the Runbook to the recipient defined in the certificate's "Recipient" tag.
+    Open the MailViewer tool provided on the desktop of the CA server (that in this LAB act also as a SMTP server) end select the most recent ".eml" file. You should see the email sent by the Runbook to the recipient defined in the certificate's "Recipient" tag.
 
     ![Screenshot MailViewer](./.diagrams/mailviewer.png)
 
