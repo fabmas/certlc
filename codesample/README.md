@@ -139,7 +139,7 @@ The LAB is fully automated and requires no manual intervention. The following st
     
     ![Screenshot CA](./.diagrams/cert_renewal.png)
 
-    Open the MailViewer tool provided on the desktop of the CA server (that in this LAB act also as a SMTP server) end select the most recent ".eml" file. You should see the email sent by the Runbook to the recipient defined in the certificate's "Recipient" tag.
+    Open the MailViewer tool provided on the desktop of the CA server (which also serves as an SMTP server in this LAB) and select the most recent ".eml" file. You should see the email sent by the Runbook to the recipient defined in the certificate's "Recipient" tag.
 
     ![Screenshot MailViewer](./.diagrams/mailviewer.png)
 
@@ -155,5 +155,5 @@ The LAB is fully automated and requires no manual intervention. The following st
     The DC01, configured as the server expecting the renewed certificate via the Key Vault extension, receives the certificate in its machine's personal certificate store after the polling period elapses.
     Connect to the DC VM and open the Certificate Manager Console. Select "Personal" and you should see the renewed certificate.
 
-    ![Screenshot DC](./.diagrams/cert_renewal_DC.png)
+    ![Screenshot DC](./.diagrams/cert_renewal_dc.png)
 
