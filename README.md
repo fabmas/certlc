@@ -117,7 +117,7 @@ bla bla bla
 >[NOTE!]
 > questo pulsante effettua il deployment dell'ambiente DEMO comprensivo di DC e CA. Eventualmente mettere un riferimento al deployment dell'ambiente demo e qui fare un estratto del json solo per la parte paas descritta in questo articolo.
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fazuredeploy.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fmindeploy.json)
 
 
 ## Contributors
