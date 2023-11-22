@@ -6,23 +6,20 @@
             "metadata": {
                 "description": "UNIQUE name of the Key Vault resource"
             },
-            "type": "String",
-            "defaultValue": "DEMO-KV-<UNIQUESTRING>"
+            "type": "String"
         },
 
         "EventGridName": {
             "metadata": {
                 "description": "UNIQUE name of the Event Grid resource"
             },
-            "type": "String",
-            "defaultValue": "DEMO-EG-<UNIQUESTRING>"
+            "type": "String"
         },
         "AutomationAccountName": {
             "metadata": {
                 "description": "Name of the Automation Account resource"
             },
-            "type": "String",
-            "defaultValue": "DEMO-AA-<UNIQUESTRING>"
+            "type": "String"
         },
         "webhookName": {
             "metadata": {
@@ -35,7 +32,7 @@
             "metadata": {
                 "description": "Name of the Hybrid Runbook Worker Group"
             },
-            "defaultValue": "EnterpriseRootCA",
+            "defaultValue": "EnterpriseCA",
             "type": "string"
         },
 

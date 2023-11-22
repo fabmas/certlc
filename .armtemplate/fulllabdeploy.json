@@ -446,8 +446,8 @@
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('DCvmName'), 'CreateADForest')]",
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
             ]
-            },
-            {
+        },
+        {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2021-03-01",
             "name": "[format('{0}/{1}', parameters('CAvmName'), 'joindomain')]",
