@@ -71,27 +71,45 @@ The solution uses several components to allow smooth certificate renewal: in the
 
 ### Key Vault Extension
 The Key Vault Extension is a crucial component for automating certificate renewal. It must be installed on servers where certificate renewal automation is desired. The installation procedures for Windows servers can be found at [Key Vault Extension for Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows), for Linux servers at [Key Vault Extension for Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux), and for Azure ARC-enabled servers at [Azure Key Vault Extension for ARC-enabled Servers](https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739).
+Key vault extension is configured with the following parameters:
+
+- **Key Vault Name:** The name of the Key Vault containing the certificate to be renewed.
+- **Certificate Name:** The name of the certificate to be renewed.
+- **Certificate Store (Name and Location):** The certificate store where the certificate is to be stored. On Windows servers, the default value for Name  is 'My' and for Location is 'LocalMachine', which is the personal certificate store of the computer. On Linux servers, a file system path can be specified, considering that the default value is 'AzureKeyVault', which is the certificate store for Azure Key Vault.
+- **linkOnRenewal:** A flag indicating whether the certificate should be linked to the server on renewal. If 'true' on Windows machines it copies the new certificate in the store and link it to the old one doing an effective rebinding of the certifcate. The default value is 'false' meaning that an explicit binding is required.
+- **pollingIntervalInS:** The polling interval for the Key Vault extension to check for certificate updates. The default value is 3600 seconds (1 hour).
+- **authenticationSetting:** The authentication setting for the Key Vault extension. For Azure-based servers this setting can be omitted, meaning that the System Assigned MI of the VM is used against the Key Vault. For on-premises servers, specifying the setting 'msiEndpoint = "http://localhost:40342/metadata/identity"' means the usage of the service principal associated with the computer object created during the ARC onboarding.
+
+Both MI and Service Principal must have the 'Key Vault Secret User' role assigned on the Key Vault containing the certificate to be renewed. The usage of 'Secret' is due to the fact that the certificate is stored in the Key Vault as a secret behind the scene.
 
 > [!NOTE]
 > + inserire qualche esempio di quelli che abbiamo provato ?
 ### Automation Account
-The Automation Account acts as the orchestrator for the certificate renewal process. It needs to be configured with a RunBook, and the PowerShell script for the RunBook can be found [here](./.RunBook/RunBook_v2.ps1). Additionally, an Hybrid Worker Group must be created, associating it with the Certification Authority for executing RunBooks. The RunBook should have a webhook associated with it, initiated from the Hybrid RunBook Worker.
+The Automation Account acts as the orchestrator for the certificate renewal process. It needs to be configured with a RunBook, and the PowerShell script for the RunBook can be found [here](./.RunBook/RunBook_v2.ps1). Additionally, an Hybrid Worker Group must be created, associating it with an Azure Windows VM member of the same AD domain of the Certification Authority (ideally the Certification Authority itself) for executing RunBooks. The RunBook should have a webhook associated with it, initiated from the Hybrid RunBook Worker. The webhook URL should be configured in the Event Subscription of the Event Grid System Topic. About security, the automation account must have the 'Key Vault Certificate Officer' on the Key Vault containing certificates.
 
 > [!NOTE!]
 > inserire link su come si crea hybrid worker, RunBook e webhook ???
 
 ### Hybrid RunBook worker
-The Hybrid RunBook Worker plays a pivotal role in executing RunBooks. It needs to be installed with the Key Vault Extension, which is the supported mode for the new installation. The Hybrid RunBook Worker should contain the Certification Authority, which can be either on Azure or on-premises.
+The Hybrid RunBook Worker plays a pivotal role in executing RunBooks. It needs to be installed with the Azure Hybrid Worker Extension, which is the supported mode for the new installation. It must be created and associated with an Azure Windows VM member of the same AD domain of the Certification Authority (ideally the Certification Authority itself). The security part of the hybrid worker is crucial for the correct execution of the RunBook. The following points should be considered:
+
+-   The 'System' account of the VM with the Hybrid RunBook Worker must have the right to enroll certificate on the Certificate template(s) used to generate new certificates.
 
 ### Azure Key Vault
-Azure Key Vault is the secure repository for certificates. The Automation Account and the server requiring certificate access must be granted specific permissions within the Key Vault. The permission model should include 'Get' and 'List' permissions for the automation account and the server. Additionally, in the Event section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account.
+Azure Key Vault is the secure repository for certificates. The Automation Account and the servers requiring certificate access, must be granted specific permissions within the Key Vault. The permission model should include 'Get' and 'List' permissions for the automation account and the server. Additionally, in the Event section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account with a subscription. The correct roles to be assigned to the automation account and the server have alredy been mentioned in the previous sections.
 
 > [!NOTE]
->+ inserire i RUOLI corretti che devono essere assegnati all'automation account e al server che deve leggere il certificato
 >+ inserire che nella sezione Event deve essere associato l'eventgrid system topic con il webhook dell'automation account
 
 ### Azure Event Grid
-Event Grid facilitates event-driven communication within the Azure environment. It needs to be configured with the Event Grid System Topic and the Event Subscription. This ensures that relevant events, such as certificate expiration alerts, trigger the necessary actions within the automation workflow.
+Event Grid facilitates event-driven communication within the Azure environment. It needs to be configured with the Event Grid System Topic and the Event Subscription. This ensures that relevant events, such as certificate expiration alerts, trigger the necessary actions within the automation workflow. The Event Grid System Topic should be configured with the following parameters:
+
+- **Source:** The name of the Key Vault containing the certificates.
+- **Source Type:** The type of the source. In this case, the source type is 'Azure Key Vault'.
+- **Event Types:** The event type to be monitored. In this case, the event type is 'Microsoft.KeyVault.CertificateNearExpiry'. This event is triggered when a certificate is near to expire.
+- **Endpoint Type:** The type of endpoint to be used. In this case, the endpoint type is 'Webhook'.
+- **Endpoint:** The URL of the webhook associated with the Automation Account RunBook as explained in the 'Automation Account' section.
+- **Subscription Name:** The name of the event subscription.
 
 ## Deploy this scenario
 bla bla bla
