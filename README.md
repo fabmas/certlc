@@ -103,10 +103,8 @@ The security part of the hybrid worker is crucial for the correct execution of t
 
 ### Azure Key Vault
 Azure Key Vault is the secure repository for certificates. The Automation Account and the servers requiring certificate access, must be granted specific permissions within the Key Vault. The RBAC model should include 'Get' and 'List' permissions for the automation account and the server. 
-Additionally, in the Event section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account with a subscription. The correct roles to be assigned to the automation account and the server have alredy been mentioned in the previous sections.
+Additionally, in the 'Event' section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account with a subscription. The correct roles to be assigned to the automation account and the server have already been mentioned in the previous sections.
 
-> [!NOTE]
->+ inserire che nella sezione Event deve essere associato l'eventgrid system topic con il webhook dell'automation account
 
 ### Azure Event Grid
 Event Grid facilitates event-driven communication within the Azure environment. It needs to be configured with the Event Grid System Topic and the Event Subscription. This ensures that relevant events, such as certificate expiration alerts, trigger the necessary actions within the automation workflow. The Event Grid System Topic should be configured with the following parameters:
