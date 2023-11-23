@@ -76,6 +76,7 @@ Key vault extension is configured with the following parameters:
 - **pollingIntervalInS:** The polling interval for the Key Vault extension to check for certificate updates. The default value is 3600 seconds (1 hour).
 - **authenticationSetting:** The authentication setting for the Key Vault extension. For Azure-based servers this setting can be omitted, meaning that the System Assigned Managed Identity (MI) of the VM is used against the Key Vault. For on-premises servers, specifying the setting 'msiEndpoint = "http://localhost:40342/metadata/identity"' means the usage of the service principal associated with the computer object created during the ARC onboarding.
 
+If the Key Vault extension is deployed on an Azure VM then the Managed Identity (MI) of the VM is used to authenticate against the Key Vault. If the KV extension is deployed on an Azure ARC-enabled server, then the authentication is performed using a service principal.
 Both MI and Service Principal must have the 'Key Vault Secret User' role assigned on the Key Vault containing the certificate to be renewed. The usage of 'Secret' is due to the fact that the certificate is stored in the Key Vault as a secret behind the scene.
 
 
@@ -125,12 +126,14 @@ To integrate the solution with your existing environment, you need to perform th
         Install-Module PSPKI -Repository PSGallery -Scope AllUsers -Force
 
     ```
-- Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 - Install the [Key Vault extension](#key-vault-extension) on the servers that need to retrieve the renewed certificates from the Key Vault.
 - Add the 'Key Vault Secret User' role to the the servers with the Key Vault extension on the Key Vault containing the certificates.
 - Add the 'System' account of the Hybrid RunBook Worker VM to the Certificate Template(s) used to generate the certificates.
-- If the SMTPServer parameter has been specified during the deployment, verify that the SMTP server is reachable from the Hybrid RunBook Worker VM, that the SMTP port is open in the firewall and that it accepts mail submissions from the Hybrid RunBook Worker VM.
-
+- If you've specified the SMTPServer parameter during deployment, ensure the following: 
+    - the Hybrid RunBook Worker VM can reach the SMTP server, 
+    - the SMTP port is open in the firewall, 
+    - the SMTP server accepts mail submissions from the Hybrid RunBook Worker VM.
+- Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 
 
 >[!NOTE]
