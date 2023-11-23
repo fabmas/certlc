@@ -123,13 +123,15 @@ To integrate the solution with your existing environment, you need to perform th
         Install-Module PSPKI -Repository PSGallery -Scope AllUsers -Force
 
     ```
+- Import the certificates into the Key Vault and tag them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 - Install the [Key Vault extension](#key-vault-extension) on the servers that need to retrieve the renewed certificates from the Key Vault.
 - Add the 'Key Vault Secret User' role to the the servers with the Key Vault extension on the Key Vault containing the certificates.
 - Add the 'System' account of the Hybrid RunBook Worker VM to the Certificate Template(s) used to generate the certificates.
 - If the SMTPServer parameter has been specified during the deployment, verify that the SMTP server is reachable from the Hybrid RunBook Worker VM, that the SMTP port is open in the firewall and that it accepts mail submissions from the Hybrid RunBook Worker VM.
 
 
->[NOTE!]
+
+>[!NOTE]
 > If you want to deploy a **full LAB environment** ready to demonstrate the whole automatic certificate renewal workflow, you can refer to the following [code sample](./codesample/README.md) that includes the deployment of the following additional resources:
 > - **Active Directory Domain Services** (ADDS) within a domain controller virtual machine;
 > - **Active Directory Certificate Services** (ADCS) within a Certification Authority virtual machine, joined to the domain, configured with a template, *WebServerShort*, for the enrollment of the certificates to be renewed.
