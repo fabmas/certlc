@@ -59,6 +59,14 @@ The solution uses several components to allow automatic certificate renewal: in 
 
 ### Key Vault Extension
 The Key Vault Extension is a crucial component for automating certificate renewal. It must be installed on servers where certificate renewal automation is desired. The installation procedures for Windows servers can be found at [Key Vault Extension for Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows), for Linux servers at [Key Vault Extension for Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux), and for Azure ARC-enabled servers at [Azure Key Vault Extension for ARC-enabled Servers](https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739).
+
+> [!NOTE]
+> You can find sample scripts for configuring the *Key Vault extension* at the links below:
+> - [KV extension for Windows servers](./blob/main/.scripts/KeyVaultExtensionWindows.ps1)
+> - [KV extension for Linux servers](./blob/main/.scripts/KeyVaultExtensionLinux.sh)
+> - [KV extension for Azure ARC-enabled Windows servers](./blob/main/.scripts/KeyVaultExtensionARC.sh)
+> - [KV extension for Azure ARC-enabled Linux servers](./blob/main/.scripts/KeyVaultExtensionARC.sh)
+
 Key vault extension is configured with the following parameters:
 
 - **Key Vault Name:** The name of the Key Vault containing the certificate to be renewed.
@@ -69,13 +77,6 @@ Key vault extension is configured with the following parameters:
 - **authenticationSetting:** The authentication setting for the Key Vault extension. For Azure-based servers this setting can be omitted, meaning that the System Assigned Managed Identity (MI) of the VM is used against the Key Vault. For on-premises servers, specifying the setting 'msiEndpoint = "http://localhost:40342/metadata/identity"' means the usage of the service principal associated with the computer object created during the ARC onboarding.
 
 Both MI and Service Principal must have the 'Key Vault Secret User' role assigned on the Key Vault containing the certificate to be renewed. The usage of 'Secret' is due to the fact that the certificate is stored in the Key Vault as a secret behind the scene.
-
-> [!NOTE]
-> You can find sample scripts for configuring the *Key Vault extension* at the links below:
-> - [Windows servers](./.scripts/KeyVaultExtensionWindows.ps1)
-> - [Linux servers](./.scripts/KeyVaultExtensionLinux.sh)
-> - [Azure ARC-enabled Windows servers](./.scripts/KeyVaultExtensionARC.sh)
-> - [Azure ARC-enabled Linux servers](./.scripts/KeyVaultExtensionARC.sh)
 
 
 ### Automation Account
@@ -114,8 +115,9 @@ To integrate the solution with your existing environment, you need to perform th
 - Configure an Hybrid Worker VM installing the [Azure Hybrid Worker Extension](https://learn.microsoft.com/azure/automation/extension-based-hybrid-runbook-worker-install) on the Certification Authority server (or on a server joined to the same AD domain) and adding it to the Hybrid Worker Group defined in the Automation Account.
 - Install the following Powershell modules on the Hybrid Worker VM:
     ```powershell
-    # Required powershell module for the Hybrid Worker
+    # Required powershell modules for the Hybrid Worker
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+        Register-PSRepository -Default -InstallationPolicy Trusted
         Install-Module Az.Accounts -requiredVersion 2.12.1 -Repository PSGallery -Scope AllUsers -Force
         Install-Module Az.Resources -requiredVersion 6.6.0 -Repository PSGallery -Scope AllUsers -Force
         Install-Module Az.Compute -requiredVersion 5.7.0 -Repository PSGallery -Scope AllUsers -Force
@@ -123,7 +125,7 @@ To integrate the solution with your existing environment, you need to perform th
         Install-Module PSPKI -Repository PSGallery -Scope AllUsers -Force
 
     ```
-- Import the certificates into the Key Vault and tag them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
+- Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 - Install the [Key Vault extension](#key-vault-extension) on the servers that need to retrieve the renewed certificates from the Key Vault.
 - Add the 'Key Vault Secret User' role to the the servers with the Key Vault extension on the Key Vault containing the certificates.
 - Add the 'System' account of the Hybrid RunBook Worker VM to the Certificate Template(s) used to generate the certificates.
