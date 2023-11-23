@@ -61,11 +61,11 @@ The solution uses several components to allow automatic certificate renewal: in 
 The Key Vault Extension is a crucial component for automating certificate renewal. It must be installed on servers where certificate renewal automation is desired. The installation procedures for Windows servers can be found at [Key Vault Extension for Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows), for Linux servers at [Key Vault Extension for Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-linux), and for Azure ARC-enabled servers at [Azure Key Vault Extension for ARC-enabled Servers](https://techcommunity.microsoft.com/t5/azure-arc-blog/in-preview-azure-key-vault-extension-for-arc-enabled-servers/ba-p/1888739).
 
 > [!NOTE]
-> You can find sample scripts for configuring the *Key Vault extension* at the links below:
-> - [KV extension for Windows servers](./blob/main/.scripts/KeyVaultExtensionWindows.ps1)
-> - [KV extension for Linux servers](./blob/main/.scripts/KeyVaultExtensionLinux.sh)
-> - [KV extension for Azure ARC-enabled Windows servers](./blob/main/.scripts/KeyVaultExtensionARC.sh)
-> - [KV extension for Azure ARC-enabled Linux servers](./blob/main/.scripts/KeyVaultExtensionARC.sh)
+> You can find sample scripts, that can be executed from Azure Cloud Shell, for configuring the *Key Vault extension* at the links below:
+> - [KV extension for Windows servers](./.scripts/kvextensionWin.ps1)
+> - [KV extension for Linux servers](./blob/main/.scripts/kvextensionLinux.ps1)
+> - [KV extension for Azure ARC-enabled Windows servers](./.scripts/kvextensionARCWin.ps1)
+> - [KV extension for Azure ARC-enabled Linux servers](./.scripts/kvextensionARCLinux.ps1)
 
 Key vault extension is configured with the following parameters:
 
