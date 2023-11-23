@@ -14,16 +14,6 @@ Before delving into details of the automated renewal process, let's take a brief
 
 The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a **Key Vault**, an **Event Grid System topic**, and an **Automation Account** exposing a webhook targeted by the Event Grid. It is assumed that an existing Public Key Infrastructure (PKI) infrastructure, consisting of a Microsoft Enterprise Certification Authority joined to an Active Directory (AD)domain, is already in place for this scenario. Both the PKI and the AD can be placed on Azure or on-premises as well as the servers that need to be configured for certificate renewal. The following sections will provide a detailed explanation of the automated renewal process.
 
-> [!NOTE]
->   - ***aggiungere da qualche parte che una volta scaricato il certificato sul client, deve essere rifatto il binding con il servizio che lo usa ad esempio IIS***
->   - ***aggiungere che più server possono essere configurati per ricevere lo stesso certificato dal KV (es. tutti i server che usano lo stesso wildcard certificate)***
->   - ***aggiungere che certificati con SAN multipli sono gestiti nel processo implementato***
->   - ***aggiungere è possibile impostare i permessi di "Key Vault Secret User" sul singolo certificato invece che sull'intero KV per il server*** 
->   - ***aggiungere che si suppono già disponibile un servizio SMTP per implemetare la notifica via email***
->   - ***aggiungere che il computer account della CA (configurata come Hybrid worker) deve avere i permessi di enrollment sui template dei certificati che si vuole rinnovare***
->   - ***VALUTARE se aggiungere il tecnicismo dell'endpoint del secret associato al certificato sul keyvault che permette di salvare anche la chiave privata.***
->   - ***VALUTARE se aggiungere che l'opzione "Link on renewal" per i server Windows permette di fare il binding automatico in caso di rinnovo, ma che suggeriamo di lasciare il flag a false per eseguire manualmente il processo di binding***
-
 ## Workflow
 
 The following drawing shows the automated workflow for certificate renewal within the Azure ecosystem. 
@@ -91,19 +81,17 @@ Both MI and Service Principal must have the 'Key Vault Secret User' role assigne
 ### Automation Account
 The Automation Account acts as the orchestrator for the certificate renewal process. It needs to be configured with a RunBook, and the PowerShell script for the RunBook can be found [here](./.RunBook/RunBook_v2a.ps1). 
 Additionally, an Hybrid Worker Group must be created, associating it with an Azure Windows VM member of the same AD domain of the Certification Authority (ideally the Certification Authority itself) for executing RunBooks. 
-The RunBook should have a webhook associated with it, initiated from the Hybrid RunBook Worker. The webhook URL should be configured in the Event Subscription of the Event Grid System Topic. 
+The RunBook should have a [webhook](https://learn.microsoft.com/azure/automation/automation-webhooks) associated with it, initiated from the Hybrid RunBook Worker. 
+The webhook URL should be configured in the Event Subscription of the Event Grid System Topic. 
 About security, the automation account must have the 'Key Vault Certificate Officer' role on the Key Vault containing certificates.
-
-> [!NOTE!]
-> inserire link su come si crea hybrid worker, RunBook e webhook ???
 
 ### Hybrid RunBook worker
 The Hybrid RunBook Worker plays a pivotal role in executing RunBooks. It needs to be installed with the [Azure Hybrid Worker Extension](https://learn.microsoft.com/azure/automation/extension-based-hybrid-runbook-worker-install), which is the supported mode for the new installation. It must be created and associated with an Azure Windows VM member of the same AD domain of the Certification Authority (ideally the Certification Authority itself). 
 The security part of the hybrid worker is crucial for the correct execution of the RunBook. The 'System' account of the Hybrid RunBook Worker VM must have the right to enroll certificate on the Certificate template(s) used to generate new certificates.
 
 ### Azure Key Vault
-Azure Key Vault is the secure repository for certificates. The Automation Account and the servers requiring certificate access, must be granted specific permissions within the Key Vault. The RBAC model should include 'Get' and 'List' permissions for the automation account and the server. 
-Additionally, in the 'Event' section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account with a subscription. The correct roles to be assigned to the automation account and the server have already been mentioned in the previous sections.
+Azure Key Vault is the secure repository for certificates. The Automation Account and the servers requiring certificate access, must be granted specific permissions within the Key Vault. The RBAC model should include 'Get' and 'List' permissions for the automation account and the servers. 
+Additionally, in the 'Event' section of the Key Vault, the Event Grid System Topic should be associated with the webhook of the Automation Account with a subscription. The correct Key Vault roles to be assigned to the [automation account](#automation-account) and the [servers](#key-vault-extension) (the ones with the Key Vault extension) have already been mentioned in the previous sections.
 
 
 ### Azure Event Grid
@@ -117,12 +105,36 @@ Event Grid facilitates event-driven communication within the Azure environment. 
 - **Subscription Name:** The name of the event subscription.
 
 ## Deploy this scenario
-bla bla bla
-
->[NOTE!]
-> questo pulsante effettua il deployment dell'ambiente DEMO comprensivo di DC e CA. Eventualmente mettere un riferimento al deployment dell'ambiente demo e qui fare un estratto del json solo per la parte paas descritta in questo articolo.
+The button below automatically deploys the environment described in this article. The deployment will take about 2 minutes to complete and creates a **Key Vault**, an **Event Grid System Topic** and an **Automation Account** containing the *RunBook* and the *webhook* linked to the Event Grid.
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fmindeploy.json)
+
+To integrate the solution with your existing environment, you need to perform the following steps:
+
+- Configure an Hybrid Worker VM installing the [Azure Hybrid Worker Extension](https://learn.microsoft.com/azure/automation/extension-based-hybrid-runbook-worker-install) on the Certification Authority server (or on a server joined to the same AD domain) and adding it to the Hybrid Worker Group defined in the Automation Account.
+- Install the following Powershell modules on the Hybrid Worker VM:
+    ```powershell
+    # Required powershell module for the Hybrid Worker
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+        Install-Module Az.Accounts -requiredVersion 2.12.1 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.Resources -requiredVersion 6.6.0 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.Compute -requiredVersion 5.7.0 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.KeyVault -requiredVersion 4.9.2 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module PSPKI -Repository PSGallery -Scope AllUsers -Force
+
+    ```
+- Install the [Key Vault extension](#key-vault-extension) on the servers that need to retrieve the renewed certificates from the Key Vault.
+- Add the 'Key Vault Secret User' role to the the servers with the Key Vault extension on the Key Vault containing the certificates.
+- Add the 'System' account of the Hybrid RunBook Worker VM to the Certificate Template(s) used to generate the certificates.
+- If the SMTPServer parameter has been specified during the deployment, verify that the SMTP server is reachable from the Hybrid RunBook Worker VM, that the SMTP port is open in the firewall and that it accepts mail submissions from the Hybrid RunBook Worker VM.
+
+
+>[NOTE!]
+> If you want to deploy a **full LAB environment** ready to demonstrate the whole automatic certificate renewal workflow, you can refer to the following [code sample](./codesample/README.md) that includes the deployment of the following additional resources:
+> - **Active Directory Domain Services** (ADDS) within a domain controller virtual machine;
+> - **Active Directory Certificate Services** (ADCS) within a Certification Authority virtual machine, joined to the domain, configured with a template, *WebServerShort*, for the enrollment of the certificates to be renewed.
+> - **Windows SMTP Server** installed on the same virtual machine of the Certification Authority for sending e-mail notifications. A MailViewer tool is also installed to facilitate the verification of the e-mail notifications sent.
+> - **KeyVault Extension** installed on the virtual machine of the Domain Controller for retrieving the renewed certificates from the Key Vault.
 
 
 ## Contributors
@@ -136,8 +148,6 @@ Principal author:
 
 *To see non-public LinkedIn profiles, sign in to LinkedIn.*
 
-## Next steps
-bla bla bla
 
 ## Related resources
 bla bla bla

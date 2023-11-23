@@ -131,8 +131,9 @@ try {
             throw
         }
 
+        $SmtpServer = Get-AutomationVariable -Name 'SMTPserver'
         # Send notification email to recipient
-        if ($null -ne $Recipient){
+        if ($null -ne $Recipient -and $SmtpServer -ne ""){
             try {
                 $tag =  @{recipient = $Recipient}
                 $newCert | Update-AzKeyVaultCertificate -Tag $tag
@@ -140,7 +141,6 @@ try {
                 $MailDate = Get-Date -format "dd/MM/yyyy"
                 
                 #Configuration Variables for E-mail
-                $SmtpServer = Get-AutomationVariable -Name 'SMTPserver'
                 $EmailFrom = "Certificate LifeCycle Automation <clc@demo.com>"
                 $Recipient = $Recipient.Replace(";",",")
                 $Recipient = $Recipient.split(",") #convert to array of comma separated recipients
