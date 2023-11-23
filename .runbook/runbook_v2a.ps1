@@ -102,15 +102,16 @@ try {
         Set-Content -Path $tempFile -Value $CSR
 
         # Issue the Certificate from the PKI
+        $CAServer = Get-AutomationVariable -Name 'CAserver'
         try {
-            $certificateRequest = Submit-CertificateRequest -CA localhost -Path $tempFile -Attribute "CertificateTemplate:$($oid)"
+            $certificateRequest = Submit-CertificateRequest -CA $CAServer -Path $tempFile -Attribute "CertificateTemplate:$($oid)"
             $certificate = $certificateRequest.Certificate
         } catch {
             Write-Error "Error issuing certificate from PKI: $_"
             throw
         }
 
-        Write-Output "Submit-CertificateRequest -CA localhost -Path $tempFile -Attribute ""CertificateTemplate:$($oid)"""
+        Write-Output "Submit-CertificateRequest -CA $CAServer -Path $tempFile -Attribute ""CertificateTemplate:$($oid)"""
         Write-Output $certificateRequest
         Write-Output $certificate
 

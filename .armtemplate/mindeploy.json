@@ -36,6 +36,14 @@
             "type": "string"
         },
 
+        "CaServer": {
+            "metadata": {
+                "description": "Certification Authority server FQDN"
+            },
+            "defaultValue": "",
+            "type": "String"
+        },
+
         "SMTPServer": {
             "metadata": {
                 "description": "SMTP server IP address or FQDN"
@@ -188,6 +196,20 @@
                 "isEncrypted": false,
                 "value": "[concat('\"',parameters('SMTPServer'),'\"')]",
                 "description": "The IP Address or FQDN of the SMTP Server to send email notifications"
+            }
+        },        
+
+        {
+            "type": "Microsoft.Automation/automationAccounts/variables",
+            "apiVersion": "2022-08-08",
+            "name": "[concat(parameters('automationAccountName'), '/CAServer')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+            ],
+            "properties": {
+                "isEncrypted": false,
+                "value": "[concat('\"',parameters('CaServer'),'\"')]",
+                "description": "The FQDN of the Certification Authority Server"
             }
         },        
 
