@@ -1,7 +1,7 @@
 
 
 In the realm of cybersecurity, the automatic renewal of certificates is a critical aspect of maintaining a secure and reliable environment. While Azure Key Vault already offers mechanisms for the [automatic renewal of certificates](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate?tabs=azure-portal) issued by an integrated Certification Authority (issued by trusted Microsoft certificate authorities *DigiCert* and *GlobalSign*), when dealing with nonintegrated CAs, a [manual](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate?tabs=azure-portal#renew-a-nonintegrated-ca-certificate) approach is required. 
-This article aims to bridge this gap by elucidating an **automated renewal process for certificates from nonintegrated CAs** that will automatically store the new certificates in the Key Vault, offering efficiency, enhanced security and  lets you integrate with several Azure resources making deployment easy.
+This article aims to bridge this gap by elucidating an **automated renewal process for certificates from non-integrated CAs** that will automatically store the new certificates in the Key Vault, offering efficiency, enhanced security and  lets you integrate with several Azure resources making deployment easy.
 
 ## Architecture
 
@@ -12,7 +12,7 @@ Before delving into details of the automated renewal process, let's take a brief
 
 *Download a [Visio file](./.media/certlc.vsdx) of this architecture.*
 
-The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a **Key Vault**, an **Event Grid System topic**, and an **Automation Account** exposing a webhook targeted by the Event Grid. It is assumed that an existing Public Key Infrastructure (PKI) infrastructure, consisting of a Microsoft Enterprise Certification Authority joined to an Active Directory (AD)domain, is already in place for this scenario. Both the PKI and the AD can be placed on Azure or on-premises as well as the servers that need to be configured for certificate renewal. The following sections will provide a detailed explanation of the automated renewal process.
+The Azure environment in question comprises the following Platform as a Service (PaaS) resources: a **Key Vault**, an **Event Grid System topic**, and an **Automation Account** exposing a webhook targeted by the Event Grid. It is assumed that an existing Public Key Infrastructure (PKI) infrastructure, consisting of a Microsoft Enterprise Certification Authority joined to an Active Directory (AD) domain, is already in place for this scenario. Both the PKI and the AD can be placed on Azure or on-premises as well as the servers that need to be configured for certificate renewal. The following sections will provide a detailed explanation of the automated renewal process.
 
 ## Workflow
 
@@ -115,28 +115,29 @@ To integrate the solution with your existing environment, you need to perform th
 
 - Configure an Hybrid Worker VM installing the [Azure Hybrid Worker Extension](https://learn.microsoft.com/azure/automation/extension-based-hybrid-runbook-worker-install) on the Certification Authority server (or on a server joined to the same AD domain) and adding it to the Hybrid Worker Group defined in the Automation Account.
 - Install the following Powershell modules on the Hybrid Worker VM:
+
     ```powershell
     # Required powershell modules for the Hybrid Worker
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
         Register-PSRepository -Default -InstallationPolicy Trusted
-        Install-Module Az.Accounts -requiredVersion 2.12.1 -Repository PSGallery -Scope AllUsers -Force
         Install-Module Az.Resources -requiredVersion 6.6.0 -Repository PSGallery -Scope AllUsers -Force
         Install-Module Az.Compute -requiredVersion 5.7.0 -Repository PSGallery -Scope AllUsers -Force
         Install-Module Az.KeyVault -requiredVersion 4.9.2 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.Accounts -requiredVersion 2.12.1
         Install-Module PSPKI -Repository PSGallery -Scope AllUsers -Force
-
     ```
+
+
+- Add the 'System' account of the Hybrid RunBook Worker VM to the Certificate Template(s) used to generate the certificates.
 - Install the [Key Vault extension](#key-vault-extension) on the servers that need to retrieve the renewed certificates from the Key Vault.
 - Add the 'Key Vault Secret User' role to the the servers with the Key Vault extension on the Key Vault containing the certificates.
-- Add the 'System' account of the Hybrid RunBook Worker VM to the Certificate Template(s) used to generate the certificates.
 - If you've specified the SMTPServer parameter during deployment, ensure the following: 
     - the Hybrid RunBook Worker VM can reach the SMTP server, 
     - the SMTP port is open in the firewall, 
     - the SMTP server accepts mail submissions from the Hybrid RunBook Worker VM.
 - Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 
-
->[!NOTE]
+> [!NOTE]
 > If you want to deploy a **full LAB environment** ready to demonstrate the whole automatic certificate renewal workflow, you can refer to the following [code sample](./codesample/README.md) that includes the deployment of the following additional resources:
 > - **Active Directory Domain Services** (ADDS) within a domain controller virtual machine;
 > - **Active Directory Certificate Services** (ADCS) within a Certification Authority virtual machine, joined to the domain, configured with a template, *WebServerShort*, for the enrollment of the certificates to be renewed.
@@ -155,6 +156,11 @@ Principal author:
 
 *To see non-public LinkedIn profiles, sign in to LinkedIn.*
 
-
 ## Related resources
-bla bla bla
+[Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview)
+[Azure Key Vault Extension for Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/key-vault-windows?tabs=version3)
+[Azure Key Vault Extension for Linux](https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux)
+[Automation account](https://learn.microsoft.com/azure/automation/overview)
+[Automation Hybrid Runbook Worker](https://learn.microsoft.com/azure/automation/automation-hybrid-runbook-worker)
+[Event Grid](https://learn.microsoft.com/azure/event-grid/overview)
+

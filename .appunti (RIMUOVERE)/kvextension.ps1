@@ -66,25 +66,25 @@ New-AzConnectedMachineExtension -ResourceGroupName "pvtest"-MachineName "angelo-
 ################################
 #Test webhook
 $body = '[
-    {
-      "id": "df4de7ec-6291-4e34-a430-42e0a7384c01",
-      "topic": "/subscriptions/0f3f9511-aa31-4981-a283-f6bb651546d7/resourceGroups/CERTLC/providers/Microsoft.KeyVault/vaults/fabmas-DEMO-KV-07",
-      "subject": "democert",
-      "eventType": "Microsoft.KeyVault.CertificateNearExpiry",
-      "data": {
-        "Id": "https://fabmas-demo-kv-07.vault.azure.net/certificates/democert/e0765abf606b4429b99a3b0ede90b3ef",
-        "VaultName": "fabmas-DEMO-KV-07",
-        "ObjectType": "Certificate",
-        "ObjectName": "democert",
-        "Version": "e0765abf606b4429b99a3b0ede90b3ef",
-        "NBF": 1699656798,
-        "EXP": 1700088798
-      },
-      "dataVersion": "1",
-      "metadataVersion": "1",
-      "eventTime": "2023-11-10T23:07:16.4775919Z"
-    }
-  ]'
+      {
+        "id": "975b9cb2-646a-418a-beef-978dbdfdcc20",
+        "topic": "/subscriptions/xxxxxxxxxxxxxxxxxxx/resourceGroups/certlc_full/providers/Microsoft.KeyVault/vaults/certlcfull-kv-02",
+        "subject": "democert",
+        "eventType": "Microsoft.KeyVault.CertificateNearExpiry",
+        "data": {
+          "Id": "https://certlcfull-kv-02.vault.azure.net/certificates/democert/2f014e1c698b4896869b6b66c9143d28",
+          "VaultName": "certlcfull-kv-02",
+          "ObjectType": "Certificate",
+          "ObjectName": "democert",
+          "Version": "2f014e1c698b4896869b6b66c9143d28",
+          "NBF": 1700753990,
+          "EXP": 1701185990
+        },
+        "dataVersion": "1",
+        "metadataVersion": "1",
+        "eventTime": "2023-11-23T15:53:16.3658314Z"
+      }
+    ]'
 
 $Headers = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
 $Headers.Add('aeg-subscription-name', 'SECURE-WEBHOOK') 
@@ -97,11 +97,8 @@ $Headers.Add('aeg-event-type', 'Notification')
 $Headers.Add('x-ms-request-id', '1cce86be-f112-436b-beee-ae9a051b3116')
 
 
-#angelom
-$webhookURI = "https://1af729e4-f610-4e9a-abe5-a8e623eafc95.webhook.we.azure-automation.net/webhooks?token=KZZ6W2YIbytll07%2fpaJMMkGLmZ1OiABVL4rQo2yns78%3d"
-
 #fabmas
-$webhookURI = "https://1af729e4-f610-4e9a-abe5-a8e623eafc95.webhook.we.azure-automation.net/webhooks?token=KZZ6W2YIbytll07%2fpaJMMkGLmZ1OiABVL4rQo2yns78%3d"
+$webhookURI = "https://37253513-6652-4c30-be5f-4d51c59ac49d.webhook.we.azure-automation.net/webhooks?token=inBPU4%2f%2fvTgZPdBlKEwsAN4Tjwc%2fRpkFHNJlpKDGTCk%3d"
 
 $response = Invoke-WebRequest -Method Post -Uri $webhookURI -Headers $Headers -Body $body -UseBasicParsing
 $response

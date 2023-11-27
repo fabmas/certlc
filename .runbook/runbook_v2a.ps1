@@ -132,12 +132,16 @@ try {
             throw
         }
 
+        if ($null -ne $Recipient) {
+            $tag =  @{recipient = $Recipient}
+            $newCert | Update-AzKeyVaultCertificate -Tag $tag
+        }
+
         $SmtpServer = Get-AutomationVariable -Name 'SMTPserver'
         # Send notification email to recipient
         if ($null -ne $Recipient -and $SmtpServer -ne ""){
             try {
-                $tag =  @{recipient = $Recipient}
-                $newCert | Update-AzKeyVaultCertificate -Tag $tag
+                
                 #Get Date
                 $MailDate = Get-Date -format "dd/MM/yyyy"
                 

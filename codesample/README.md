@@ -8,8 +8,9 @@ urlFragment: certlc
 languages:
 - json
 ---
+
 # Certificate Life Cycle LAB Deployment
-This guide details the process of deploying the LAB environment for the [Certificate Life Cycle on Azure](https://learn.microsoft.com/en-us/azure/architecture/example-scenario/certlc/)
+In this tutorial, you will learn how to deploy the LAB environment for the **Certificate Life Cycle on Azure** scenario. The goal is to showcase a comprehensive solution for the automated renewal of certificates from non-integrated Certificate Authorities.
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Ffulllabdeploy.json)
 
@@ -59,7 +60,9 @@ Additional parameters needed for the deployment can be left to their default val
 ![Screenshot of a succeeded deployment](./.diagrams/SucceededDeployment.jpg)
 
 ## LAB environment description
-The LAB environment is designed to represent an in-depth technical overview of a comprehensive end-to-end certificate management workflow, which embodies the entire process described in the article [articolo](http://insertlink.com).
+The LAB environment is designed to represent an in-depth technical overview of an automated renewal process for certificates from non-integrated CAs, which embodies the entire workflow shown below.
+
+![Workflow](./.diagrams/workflow.png)
 
 The LAB environment is structured to showcase the seamless workflow, allowing for a complete demonstration of the automated certificate management process. Let's delve into the key components, shown in the diagram below, constituting this environment:
 
@@ -70,9 +73,9 @@ The LAB environment is structured to showcase the seamless workflow, allowing fo
     - A virtual network housing a /24 subnet accommodating two virtual machines.
     - One virtual machine acts as the domain controller for the Active Directory, simulating the server that receives the renewed digital certificate at the conclusion of the workflow.
     - Another virtual machine serves as the Public Key Infrastructure (PKI), running the Microsoft Certificate Services configured as the Enterprise Root Certification Authority (CA). The CA is set up with a certificate template issuing certificates with a 5-day validity, tailored for continuous activation within the demo environment.
-
+    
     > [!NOTE]
-       The CA virtual machine is configured also as an SMTP server to allow for email communication in this demo environment.
+> The CA virtual machine is configured also as an SMTP server to allow for email communication in this demo environment.
 
 1. **Key Components:**
 
@@ -94,15 +97,15 @@ The LAB environment is structured to showcase the seamless workflow, allowing fo
     - Connects to the CA, requests a certificate with the previously obtained CSR, and presents it within the Key Vault to conclude the renewal process.
     - Sends emails to the identified recipients.
 
-    > [!NOTE]
-    > The RunBook performs the actions described above on Azure, using the System Managed Identity of the automation account, and inside the Certification Authority, using the system account (domain computer account) of the CA server.  To access the Azure Key Vault, the System Managed Identity of the automation account has been granted the "*Key Vault Certificate Officer*" role on the Key Vault.
+> [!NOTE]
+> The RunBook performs the actions described above on Azure, using the System Managed Identity of the automation account, and inside the Certification Authority, using the system account (domain computer account) of the CA server.  To access the Azure Key Vault, the System Managed Identity of the automation account has been granted the "*Key Vault Certificate Officer*" role on the Key Vault.
 
 
 1. **Certificate Retrieval:**
     The DC01, configured as the server expecting the renewed certificate via the Key Vault extension, receives the certificate in its machine's personal certificate store after the polling period elapses.
 
-    > [!NOTE]
-    > To access the Azure Key Vault, the System Managed Identity of the DC01 virtual machine has been granted the "*Key Vault Secret User*" role on the Key Vault. 
+> [!NOTE]
+> To access the Azure Key Vault, the System Managed Identity of the DC01 virtual machine has been granted the "*Key Vault Secret User*" role on the Key Vault. 
 
 1. **Conclusion of the Demo:**
     At this stage, the demonstration concludes successfully.
@@ -122,10 +125,12 @@ The LAB is fully automated and requires no manual intervention. The following st
 1. **Certificate Creation:**
     The certificate is created and stored in the Key Vault. The certificate is configured with a 5-day validity, and the Key Vault is configured to trigger the Event Grid when the certificate is nearing expiration.
     Open the KeyVault an select the Certificate Section. You should see the certificate created by the deployment named "*democert*".
-    > [!NOTE]
-    > To access the certificate section you need at least the "Key Vault Certificate Officer" role on the Key Vault.
 
     ![Screenshot Key Vault](./.diagrams/cert_creation.png)
+
+> [!NOTE]
+>  To access the certificate section you need at least the "Key Vault Certificate Officer" role on the Key Vault.
+    
 
 1. **Certificate Near Expiration**
     The certificate is nearing expiration, and the Key Vault triggers the Event Grid, which in turn triggers the Webhook, initiating the execution of the Runbook.
