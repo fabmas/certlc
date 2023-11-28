@@ -16,8 +16,8 @@ In this tutorial, you will learn how to deploy the LAB environment for the **Cer
 
 To initiate the deployment of the LAB environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
 
-> [!NOTE]
-> For resources such as key vaults, automation accounts and event-grid, which necessitate globally unique names, kindly replace the *\<UNIQUESTRING>* placeholder with a unique string of your choice, following the resource's constraints (e.g., maximum character count, lowercase only, etc.).
+> [!IMPORTANT]
+> For resources such as key vaults, automation accounts and event-grid, which necessitate globally unique names, kindly replace the *`UNIQUESTRING`* placeholder with a unique string of your choice, following the resource's constraints (e.g., maximum character count, lowercase only, etc.).
 
 Parameters that require your primary attention are listed in the table below:
 
@@ -28,9 +28,9 @@ Parameters that require your primary attention are listed in the table below:
 | **Region** | The region where the resources will be deployed. | |
 | **Domain Administrator Password** | The password of the Active Directory domain administrator. | |
 | **CA Admin Password** | The password of the certificate authority administrator. | |
-| **Key Vault Name** | The name of the key vault. | DEMO-KV-*\<UNIQUESTRING>* |
-| **Event Grid Name** | The name of the event grid system topic. | DEMO-EG-*\<UNIQUESTRING>* |
-| **Automation Account Name** | The name of the automation account. | DEMO-AA-*\<UNIQUESTRING>* |
+| **Key Vault Name** | The name of the key vault. | DEMO-KV-*\<`UNIQUESTRING`>* |
+| **Event Grid Name** | The name of the event grid system topic. | DEMO-EG-*\<`UNIQUESTRING`>* |
+| **Automation Account Name** | The name of the automation account. | DEMO-AA-*\<`UNIQUESTRING`>* |
 
 Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
 
@@ -74,7 +74,7 @@ The LAB environment is structured to showcase the seamless workflow, allowing fo
     - One virtual machine acts as the domain controller for the Active Directory, simulating the server that receives the renewed digital certificate at the conclusion of the workflow.
     - Another virtual machine serves as the Public Key Infrastructure (PKI), running the Microsoft Certificate Services configured as the Enterprise Root Certification Authority (CA). The CA is set up with a certificate template issuing certificates with a 5-day validity, tailored for continuous activation within the demo environment.
     
-    > [!NOTE]
+> [!NOTE]
 > The CA virtual machine is configured also as an SMTP server to allow for email communication in this demo environment.
 
 1. **Key Components:**
