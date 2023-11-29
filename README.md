@@ -7,7 +7,7 @@ This article aims to bridge this gap by elucidating an **automated renewal proce
 
 Before delving into details of the automated renewal process, let's take a brief look at the architecture that forms the backbone of this solution. 
 
-![reference architecture](./.media/certlc-arch.jpg)
+![reference architecture](./.media/certlc-arch.svg)
 
 
 *Download a [Visio file](./.media/certlc.vsdx) of this architecture.*
