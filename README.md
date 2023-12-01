@@ -138,7 +138,7 @@ To integrate the solution with your existing environment, you need to perform th
 - Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 
 > [!IMPORTANT]
-> > If you want to deploy a **full LAB environment** ready to demonstrate the whole automatic certificate renewal workflow, you can refer to the provided [**code sample**](https://github.com/Azure/certlc/blob/main/README.md) that includes the deployment of the following additional resources:
+> > If you want to deploy a **full LAB environment** ready to demonstrate the whole automatic certificate renewal workflow, you can refer to the provided [**code sample**](https://learn.microsoft.com/en-us/samples/azure/certlc/certlc/) that includes the deployment of the following additional resources:
 > > - **Active Directory Domain Services** (ADDS) within a domain controller virtual machine;
 > > - **Active Directory Certificate Services** (ADCS) within a Certification Authority virtual machine, joined to the domain, configured with a template, *WebServerShort*, for the enrollment of the certificates to be renewed.
 > > - **Windows SMTP Server** installed on the same virtual machine of the Certification Authority for sending e-mail notifications. A MailViewer tool is also installed to facilitate the verification of the e-mail notifications sent.
