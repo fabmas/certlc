@@ -76,7 +76,10 @@ The Key Vault extension configuration parameters include:
 The Automation Account orchestrates the certificate renewal process. It needs to be configured with a RunBook, and the PowerShell script for the RunBook can be found [here](https://github.com/Azure/certlc/blob/main/.runbook/runbook_v2a.ps1). 
 Additionally, an Hybrid Worker Group must be created, associating it with an Azure Windows Server member of the same AD domain of the Certification Authority (ideally the Certification Authority itself) for executing RunBooks. 
 The RunBook should have a [webhook](https://learn.microsoft.com/azure/automation/automation-webhooks) associated with it, initiated from the Hybrid RunBook Worker. 
-The webhook URL should be configured in the Event Subscription of the Event Grid System Topic. 
+The webhook URL should be configured in the Event Subscription of the Event Grid System Topic. e code is provided as-is and is not supported by Microsoft. It is intended to be used as a sample and can be customized to meet specific requirements. Microsoft does not guarantee the operation of this code nor does it provide support for issues arising from its operation.
+
+>> [!CAUTION]
+> DISCLAIMER: The code is provided as-is and is not supported by Microsoft. It is intended to be used as a sample and can be customized to meet specific requirements. Microsoft does not guarantee the operation of this code nor does it provide support for issues arising from its operation.
 
 
 #### Hybrid RunBook worker
