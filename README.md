@@ -164,7 +164,7 @@ Expenses associated with the Key Vault extension and the Hybrid RunBook Worker a
 
 Additionally, the cost of the Key Vault is influenced by various factors, including the chosen SKU (Standard versus Premium), the quantity of stored certificates, and the frequency of operations conducted on the certificates.
 
-To estimate the cost of implementing this solution, use the [Azure pricing calculator](https://azure.microsoft.com/pricing/calculator), inputting the services described in this article. [Overview of the cost optimization pillars](https://learn.microsoft.com/azure/well-architected/cost-optimization/) can also be helpful.
+To estimate the cost of implementing this solution, use the [Azure pricing calculator](https://azure.microsoft.com/pricing/calculator), inputting the services described in this article.
 
 ### Operational excellence
 
