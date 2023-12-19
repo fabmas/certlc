@@ -105,7 +105,7 @@ This solution uses Azure Automation Account to orchestrate the certificate renew
 
 An alternative approach could be to use **Azure Logic Apps**. The main difference between the two approaches is that Azure Automation Account is a PaaS service, while Azure Logic Apps is a SaaS service. 
 
-The main advantage of Azure Logic Apps is that it is a fully managed service, meaning that the customer does not need to worry about the underlying infrastructure and that it can easily integrate with external connectors to open additional notification scenarios (like interacting with Teams or M365). 
+The main advantage of Azure Logic Apps is that it is a fully managed service, meaning that the customer does not need to worry about the underlying infrastructure. Additionally, Azure Logic Apps can easily integrate with external connectors, expanding the range of notification possibilities, such as engaging with Teams or M365.
 
 The main disadvantage is the lack of a feature similar to Hybrid RunBook Worker, which results in less flexible integration with the Certification Authorities.
 For this reason, Azure Automation Account was chosen as the preferred approach. 
