@@ -46,7 +46,7 @@
 
         "CaServer": {
             "metadata": {
-                "description": "Certification Authority server FQDN"
+                "description": "FQDN of the Certification Authority server"
             },
             "defaultValue": "",
             "type": "String"
@@ -320,6 +320,24 @@
             }
         },   
          
+        {
+            "type": "Microsoft.Automation/automationAccounts/jobSchedules",
+            "apiVersion": "2023-11-01",
+            "name": "[concat(parameters('AutomationAccountName'), '/', variables('UniqueStringBasedOnTimeStamp'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+            ],
+            "properties": {
+                "runbook": {
+                    "name": "CertLifeCycleMgmt"
+                },
+                "schedule": {
+                    "name": "Check CertLC Queue"
+                },
+                "runOn": "[parameters('WorkerGroupName')]"
+            }
+        },
+
         {
             "type": "Microsoft.EventGrid/systemTopics",
             "apiVersion": "2023-06-01-preview",

@@ -124,7 +124,8 @@ function certlcworkflow {
 
             # Issue the Certificate from the PKI
             try {
-                $certificateRequest = Submit-CertificateRequest -CA $CAServer -Path $tempFile -Attribute "CertificateTemplate:$($oid)"
+                $CA = Get-CertificationAuthority -ComputerName $CAServer
+                $certificateRequest = Submit-CertificateRequest -CA $CA -Path $tempFile -Attribute "CertificateTemplate:$($oid)"
                 $certificate = $certificateRequest.Certificate
             } catch {
                 Write-Output "Error issuing certificate from PKI"
