@@ -133,11 +133,11 @@ configuration ExecuteScript
                 New-Item -Path $ScriptFolder -ItemType Directory -Force |Out-Null
                 $ScriptName="InstallEntRootCA.ps1"
                 $ScriptPath="$ScriptFolder\$ScriptName"
-                $ScriptURL="https://raw.githubusercontent.com/fabmas/certlc/codesample/.scripts/InstallEntRootCA.ps1"
+                $ScriptURL="https://raw.githubusercontent.com/fabmas/certlc/main/codesample/.scripts/InstallEntRootCA.ps1"
                 Invoke-WebRequest -uri $ScriptURL -OutFile $ScriptPath
 
                 #Copy the utility to view the .eml file
-                Invoke-WebRequest -uri "https://raw.githubusercontent.com/fabmas/certlc/codesample/DemoTools/MailViewer.ps1" -OutFile "$ScriptFolder\Mailviewer.ps1"
+                Invoke-WebRequest -uri "https://raw.githubusercontent.com/fabmas/certlc/main/codesample/DemoTools/MailViewer.ps1" -OutFile "$ScriptFolder\Mailviewer.ps1"
 
                 #add link to default desktop
                 $desktopPath = 'C:\Users\Public\Desktop'
