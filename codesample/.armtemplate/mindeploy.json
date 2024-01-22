@@ -319,10 +319,10 @@
             }
         },
 
-        {
+       {
             "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
             "apiVersion": "2023-06-01-preview",
-            "name": "[concat(parameters('EventGridName'), '/CertLC')]",
+            "name": "[concat(parameters('EventGridName'), '/CertLC-webhook')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]",
                 "[resourceId('Microsoft.Automation/automationAccounts/webhooks', parameters('AutomationAccountName'), parameters('webhookName'))]"
@@ -349,6 +349,37 @@
             }
         },
 
+        {
+            "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+            "apiVersion": "2023-12-15-preview",
+            "name": "[concat(parameters('EventGridName'), '/CertLC-queue')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]"
+            ],
+            "properties": {
+                "destination": {
+                    "properties": {
+                        "resourceId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName'))]",
+                        "queueName": "certlc",
+                        "queueMessageTimeToLiveInSeconds": 604800
+                    },
+                    "endpointType": "StorageQueue"
+                },
+                "filter": {
+                    "includedEventTypes": [
+                        "Microsoft.KeyVault.CertificateNearExpiry"
+                    ],
+                    "enableAdvancedFilteringOnArrays": true
+                },
+                "labels": [],
+                "eventDeliverySchema": "EventGridSchema",
+                "retryPolicy": {
+                    "maxDeliveryAttempts": 30,
+                    "eventTimeToLiveInMinutes": 1440
+                }
+            }
+        },
+        
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",

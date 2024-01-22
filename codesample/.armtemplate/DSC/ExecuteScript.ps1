@@ -79,7 +79,7 @@ configuration ExecuteScript
             DependsOn            = "[PackageManagementSource]PSGallery"
         }
 
-        PackageManagement PSModuleAzCompute
+        PackageManagement PSModuleAzStorage
         {
             Ensure               = "Present"
             Name                 = "Az.Storage"
