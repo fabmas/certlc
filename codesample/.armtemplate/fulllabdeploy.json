@@ -704,6 +704,23 @@
         },   
 
         {
+            "type": "Microsoft.Automation/automationAccounts/schedules",
+            "apiVersion": "2023-11-01",
+            "name": "[concat(parameters('AutomationAccountName'), '/Check CertLC Queue')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+            ],
+            "properties": {
+                "description": "Check if pending requests must be managed.",
+                "startTime": "[dateTimeAdd(parameters('_CurrentDateTimeInTicks'),'PT1H')]",
+                "expiryTime": "9999-12-31T23:59:59.9999999+00:00",
+                "interval": 6,
+                "frequency": "Hour",
+                "timeZone": "Europe/Rome"
+            }
+        },
+
+        {
             "type": "Microsoft.Automation/automationAccounts/jobSchedules",
             "apiVersion": "2023-11-01",
             "name": "[concat(parameters('AutomationAccountName'), '/', variables('UniqueStringBasedOnTimeStamp'))]",
