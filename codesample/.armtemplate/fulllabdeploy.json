@@ -690,6 +690,20 @@
         },         
 
         {
+            "type": "Microsoft.Automation/automationAccounts/variables",
+            "apiVersion": "2022-08-08",
+            "name": "[concat(parameters('automationAccountName'), '/resourceGroup')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+            ],
+            "properties": {
+                "isEncrypted": false,
+                "value": "[concat('\"',resourceGroup().name,'\"')]",
+                "description": "The name of the Resource Group containing the Storage Account"
+            }
+        },   
+        
+        {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('CAvmName'),'/HybridWorkerExtension')]",
             "apiVersion": "2022-03-01",
