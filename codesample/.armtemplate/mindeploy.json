@@ -414,7 +414,7 @@
             "name": "[concat(parameters('EventGridName'), '/CertLC-queue')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', concat(parameters('StorageAccountName'), '/default/certlc'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', parameters('storageAccountName') , 'default', 'certlc' )]"
             ],
 
             "properties": {
