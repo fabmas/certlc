@@ -929,7 +929,8 @@
             "apiVersion": "2023-12-15-preview",
             "name": "[concat(parameters('EventGridName'), '/CertLC-queue')]",
             "dependsOn": [
-                "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]"
+                "[resourceId('Microsoft.EventGrid/systemTopics', parameters('EventGridName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts/queueServices/queues', concat(parameters('StorageAccountName'), '/default/certlc'))]"
             ],
             "properties": {
                 "destination": {
