@@ -347,10 +347,11 @@
          
         {
             "type": "Microsoft.Automation/automationAccounts/jobSchedules",
-            "apiVersion": "2023-11-01",
-            "name": "[concat(parameters('AutomationAccountName'), '/', variables('UniqueStringBasedOnTimeStamp'))]",
+            "apiVersion": "2022-08-08",
+            "name": "[concat(parameters('AutomationAccountName'), '/jobSchedules')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+                "[parameters('automationAccountName')]",
+                "[resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('AutomationAccountName'), 'CertLifeCycleMgmt')]"
             ],
             "properties": {
                 "runbook": {
