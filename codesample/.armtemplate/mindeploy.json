@@ -69,6 +69,14 @@
             }
         },
 
+        "ScheduleStartTime": {
+            "type": "string",
+            "defaultValue": "[dateTimeAdd(utcNow('u'), 'PT1H')]",
+            "metadata": {
+                "description": "The schedlule start time for the runbook. Default is 1 hour from now."
+            }
+        },
+
         "_CurrentDateTimeInTicks": {
             "metadata": {
                 "description": "Current date time in ticks used for unique variables"
@@ -329,7 +337,7 @@
             ],
             "properties": {
                 "description": "Check if pending requests must be managed.",
-                "startTime": "[dateTimeAdd(parameters('_CurrentDateTimeInTicks'),'PT1H')]",
+                "startTime": "[parameters('ScheduleStartTime')]",
                 "expiryTime": "9999-12-31T23:59:59.9999999+00:00",
                 "interval": 6,
                 "frequency": "Hour",
