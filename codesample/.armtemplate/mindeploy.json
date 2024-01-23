@@ -65,7 +65,7 @@
             "type": "string",
             "defaultValue": "[dateTimeAdd(utcNow('u'), 'P1Y')]",
             "metadata": {
-                "description": "The expiry time for the webhook. Default is 365 days from now."
+                "description": "The expiry time for the webhook. Default is 365 days from now. (Example of the format in UTC timezone: 2025-01-22T08:18:24Z)"
             }
         },
 
@@ -73,7 +73,7 @@
             "type": "string",
             "defaultValue": "[dateTimeAdd(utcNow('u'), 'PT1H')]",
             "metadata": {
-                "description": "The schedlule start time for the runbook. Default is 1 hour from now."
+                "description": "The schedlule start time for the runbook. Default is 1 hour from now. (Example of the format in UTC timezone: 2025-01-22T08:18:24Z)"
             }
         },
 
