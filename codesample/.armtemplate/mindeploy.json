@@ -54,7 +54,7 @@
 
         "SMTPServer": {
             "metadata": {
-                "description": "SMTP server IP address or FQDN"
+                "description": "FQDN or IP address of the SMTP server"
             },
             "defaultValue": "",
             "type": "String"
