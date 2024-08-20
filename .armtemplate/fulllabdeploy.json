@@ -1398,6 +1398,22 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
+            "name": "[guid('AA-CryptoOfficerOnKeyVault', variables('UniqueStringBasedOnTimeStamp'))]",
+            "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyvaultName'))]",
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '14b46e9e-c2b7-41b4-b07b-48a6ebf60603')]",
+                "principalId": "[reference(resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName')), '2022-08-08', 'full').identity.principalId]",
+                "principalType": "ServicePrincipal"
+            }
+        },
+
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
             "name": "[guid('AA-ReaderOnSA', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName'))]",
             "dependsOn": [
