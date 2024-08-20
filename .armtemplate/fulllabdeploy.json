@@ -102,12 +102,18 @@
                 "description": "The password for the administrator account of the Certificate Service VM."
             }
         },
+        "UNIQUESTRING": {
+            "type": "string",
+            "metadata": {
+                "description": "The string used as a suffix for the unique resources below."
+            }
+        },
         "KeyVaultName": {
             "metadata": {
                 "description": "UNIQUE name of the Key Vault resource"
             },
             "type": "String",
-            "defaultValue": "DEMO-KV-<UNIQUESTRING>"
+            "defaultValue": "[concat('DEMO-KV-',parameters('UNIQUESTRING'))]"
         },
 
         "EventGridName": {
@@ -115,7 +121,7 @@
                 "description": "UNIQUE name of the Event Grid resource"
             },
             "type": "String",
-            "defaultValue": "DEMO-EG-<UNIQUESTRING>"
+            "defaultValue": "[concat('DEMO-EG-',parameters('UNIQUESTRING'))]"
         },
 
         "StorageAccountName": {
@@ -123,7 +129,7 @@
                 "description": "UNIQUE name of the StorageAccount resource"
             },     
             "type": "String",       
-            "defaultValue": "demosa<UNIQUESTRING>"
+            "defaultValue": "[concat('demosa',parameters('UNIQUESTRING'))]"
         },
         
         "AutomationAccountName": {
@@ -131,25 +137,25 @@
                 "description": "Name of the Automation Account resource"
             },
             "type": "String",
-            "defaultValue": "DEMO-AA-<UNIQUESTRING>"
+            "defaultValue": "[concat('DEMO-AA-',parameters('UNIQUESTRING'))]"
         },
         "workspaceName": {
             "type": "string",
-            "defaultValue": "DEMO-LA-<UNIQUESTRING>",
+            "defaultValue": "[concat('DEMO-LA-',parameters('UNIQUESTRING'))]",
             "metadata": {
             "description": "Specify the name of the Log Analytics workspace."
             }
         },
         "dataCollectionEndpointName": {
             "type": "String",
-            "defaultValue": "DEMO-DCE-<UNIQUESTRING>",
+            "defaultValue": "[concat('DEMO-DCE-',parameters('UNIQUESTRING'))]",
             "metadata": {
                 "description": "Specifies the name of the Data Collection Endpoints to create."
             }
         },
         "dataCollectionRuleName": {
             "type": "String",
-            "defaultValue": "DEMO-DCR-<UNIQUESTRING>",
+            "defaultValue": "[concat('DEMO-DCR-',parameters('UNIQUESTRING'))]",
             "metadata": {
                 "description": "Specifies the name of the Data Collection Rule to create."
             }
