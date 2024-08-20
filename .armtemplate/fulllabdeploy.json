@@ -217,9 +217,9 @@
         },
         "TableName": {
             "type": "string",
-            "defaultValue":"CERTLCDashboardData",
+            "defaultValue":"CERTLCData",
             "metadata": {
-            "description": "Specify the name of the Table used for CERTLC dashboard."
+            "description": "Specify the name of the Table used for CERTLC dashboard data."
             }
         },
         "heartbeatTableRetention": {
