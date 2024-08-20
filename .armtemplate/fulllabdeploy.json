@@ -832,7 +832,7 @@
         {
             "type": "Microsoft.Automation/automationAccounts/jobSchedules",
             "apiVersion": "2023-11-01",
-            "name": "[concat(parameters('AutomationAccountName'), '/',guid(resourceGroup().id, deployment().name),'-CertLCJobSchedule')]",
+            "name": "[concat(parameters('AutomationAccountName'), '/',guid(resourceGroup().id, deployment().name,'-CertLCJobSchedule'))]",
             "dependsOn": [
                 "[parameters('automationAccountName')]",
                 "[resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('AutomationAccountName'), 'CertLifeCycleMgmt')]"
@@ -1352,7 +1352,7 @@
         {
             "type": "Microsoft.Automation/automationAccounts/jobSchedules",
             "apiVersion": "2023-11-01",
-            "name": "[concat(parameters('AutomationAccountName'), '/',guid(resourceGroup().id, deployment().name),'-CertLCDashboardDataInjestion')]",
+            "name": "[concat(parameters('AutomationAccountName'), '/',guid(resourceGroup().id, deployment().name,'-CertLCDashboardDataInjestion'))]",
             "dependsOn": ["[resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('AutomationAccountName'), 'CertLCDashboardDataInjestion')]"],
             "properties": {
                 "runbook": {
