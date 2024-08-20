@@ -1114,7 +1114,7 @@
                 "totalRetentionInDays": "[parameters('heartbeatTableRetention')]",
                 "plan": "Analytics",
                 "schema": {
-                    "name": "[format('{0}_{1}', parameters('TableName'),'CL')]",
+                    "name": "[variables('TableName')]",
                     "columns": [
                         {
                             "name": "CertExpiration",
