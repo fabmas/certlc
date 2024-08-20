@@ -556,7 +556,6 @@
                     ]
                 }
             },
-            "licenseType": "Windows_Server",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('CAnicName'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('DCvmName'))]",
@@ -1301,6 +1300,9 @@
             "type": "Microsoft.Automation/automationAccounts/variables",
             "apiVersion": "2022-08-08",
             "name": "[concat(parameters('automationAccountName'), '/VaultName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+            ],
             "properties": {
                 "isEncrypted": false,
                 "value": "[concat('\"',parameters('keyVaultName'),'\"')]",
@@ -1311,6 +1313,9 @@
             "type": "Microsoft.Automation/automationAccounts/variables",
             "apiVersion": "2022-08-08",
             "name": "[concat(parameters('automationAccountName'), '/streamName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+            ],
             "properties": {
                 "isEncrypted": false,
                 "value": "[concat('\"',variables('streamName'),'\"')]",
@@ -1322,6 +1327,9 @@
             "type": "Microsoft.Automation/automationAccounts/runbooks",
             "apiVersion": "2022-08-08",
             "name": "[concat(parameters('AutomationAccountName'), '/CertLCDashboardDataInjestion')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+            ],
             "location": "[variables('Location')]",
             "properties": {
                 "runbookType": "PowerShell",
@@ -1340,6 +1348,9 @@
             "type": "Microsoft.Automation/automationAccounts/schedules",
             "apiVersion": "2023-11-01",
             "name": "[concat(parameters('AutomationAccountName'), '/injestData_hourly')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
+            ],
             "properties": {
                 "startTime": "[parameters('ScheduleDashboardDataStartTime')]",
                 "expiryTime": "",
