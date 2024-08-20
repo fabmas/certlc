@@ -217,7 +217,7 @@
         },
         "TableName": {
             "type": "string",
-            "defaultValue":"CERTLCData",
+            "defaultValue":"Clcdata",
             "metadata": {
             "description": "Specify the name of the Table used for CERTLC dashboard data."
             }
