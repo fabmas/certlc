@@ -1254,11 +1254,13 @@
         },
 
         {
-            "name": "[parameters('workbookId')]",
             "type": "microsoft.insights/workbooks",
+            "name": "[parameters('workbookId')]",
             "location": "[variables('Location')]",
             "apiVersion": "2022-04-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/tables', format('{0}/{1}', parameters('workspaceName'), variables('TableName')))]"
+            ],
             "kind": "shared",
             "properties": {
                 "displayName": "[parameters('workbookDisplayName')]",
