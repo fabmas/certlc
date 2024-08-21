@@ -1108,7 +1108,8 @@
             "apiVersion": "2022-10-01",
             "name": "[format('{0}/{1}', parameters('workspaceName'), variables('TableName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('DCvmName'), 'CreateADForest')]"
             ],
             "properties": {
                 "totalRetentionInDays": "[parameters('heartbeatTableRetention')]",
