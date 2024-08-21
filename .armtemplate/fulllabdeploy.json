@@ -1468,8 +1468,7 @@
             "scope": "[resourceId('Microsoft.Insights/dataCollectionRules', parameters('dataCollectionRuleName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Insights/dataCollectionRules', parameters('dataCollectionRuleName'))]",
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('DCvmName'), 'CreateADForest')]"
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '3913510d-42f4-4e42-8a64-420c390055eb')]",
@@ -1480,7 +1479,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
-            "name": "[guid('AA-MonitoringMetricsPublisherOnDCR', variables('UniqueStringBasedOnTimeStamp'))]",
+            "name": "[guid('AA-MonitoringMetricsPublisherOnDCE', variables('UniqueStringBasedOnTimeStamp'))]",
             "scope": "[resourceId('Microsoft.Insights/dataCollectionEndpoints', parameters('dataCollectionEndpointName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Insights/dataCollectionEndpoints', parameters('dataCollectionEndpointName'))]",
