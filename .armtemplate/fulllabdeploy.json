@@ -265,9 +265,9 @@
         },
         "ScheduleDashboardDataStartTime": {
             "type": "string",
-            "defaultValue": "[dateTimeAdd(utcNow('u'), 'PT10M')]",
+            "defaultValue": "[dateTimeAdd(utcNow('u'), 'PT30M')]",
             "metadata": {
-                "description": "The schedlule start time for the Dashboard Data Injestion runbook. Default is 10 minutes from now. (Example of the format in UTC timezone: 2026-01-22T08:18:24Z)"
+                "description": "The schedlule start time for the Dashboard Data Injestion runbook. Default is 30 minutes from now. (Example of the format in UTC timezone: 2026-01-22T08:18:24Z)"
             }
         },
 
