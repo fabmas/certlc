@@ -252,7 +252,7 @@ Parameters that require your primary attention are listed in the table below:
 | Parameter | Description | Default value |
 |-----------|-------------|---------------|
 | **Subscription** | The subscription where the resources will be deployed. | |
-| **Resource Group** | The resource group where the resources will be deployed. | |
+| **Resource Group** | The resources will be deployed to the specified resource group, which must be the same one where the [production base deployment](#production---base-deployment) was previously executed. | |
 | **Region** | The region where the resources will be deployed. | |
 | **Workspace Name** | The name of the Log Analytics workspace. | |
 | **Table Name** | The name of the custom table defined in Loag Analytics to store certificates expiration data. |  |
