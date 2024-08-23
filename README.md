@@ -176,7 +176,11 @@ The LAB is fully automated and requires no manual intervention. The following st
 
 1. **Dashboard**
     A scheduled job runs every hour to retrieve information about the expiration of the certificates stored in the keyvault. To ensure data are collected at the end of the deployment you can manually run the CertLCDashboardDataInjestion runbook.
-    Select 
+    Select the created workbook under the Monitor section to view the dashboard with the expiration status of certificates stored in your key vault.
+    
+    *Note: In the LAB deployment, the Runbook adds some "fake" data to demonstrate all possible expiration statuses: 'Not Expired' (green), 'Expiring Soon' (yellow), and 'Expired' (red).*
+    
+    ![Screenshot Workbook](./.diagrams/Workbook.png)
 
 ## Production - base deployment
 The Production base deployment creates a Key Vault, an Event Grid System Topic configured with two subscriptions, a Storage Account containing the 'certlc' queue and an Automation Account containing the RunBook and the webhook linked to the Event Grid.
