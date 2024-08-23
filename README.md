@@ -175,8 +175,8 @@ The LAB is fully automated and requires no manual intervention. The following st
     ![Screenshot DC](./.diagrams/cert_renewal_dc.png)
 
 1. **Dashboard**
-    A scheduled job runs every hour to retrieve information about the expiration of the certificates stored in the keyvault. To ensure data are collected at the end of the deployment you can manually run the CertLCDashboardDataInjestion runbook.
-    Select the created workbook under the Monitor section to view the dashboard with the expiration status of certificates stored in your key vault.
+    A scheduled job runs every hour to retrieve information about the expiration of the certificates stored in the Key Vault. To ensure that data is collected immediately after deployment, you can manually run the `CertLCDashboardDataIngestion` Runbook.
+    To view the dashboard displaying the expiration status of certificates stored in your Key Vault, navigate to the Monitor section and select the created Workbook.
     
     *Note: In the LAB deployment, the Runbook adds some "fake" data to demonstrate all possible expiration statuses: 'Not Expired' (green), 'Expiring Soon' (yellow), and 'Expired' (red).*
     
