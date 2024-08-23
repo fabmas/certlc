@@ -197,7 +197,7 @@ Parameters that require your primary attention are listed in the table below:
 | **CA Server** | The name of the certificate authority server.|  |
 | **SMTP Server** | The name of the SMTP server for notification e-mail.|  |
 
-Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
+Additional parameters needed for the deployment can be left to their default values. Those parameters are listed in the table below:
 
 | Parameter | Description | Default value |
 |-----------|-------------|---------------|
@@ -239,7 +239,7 @@ To integrate the solution with your existing environment, you need to perform th
 - Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
 
 ## Production - optional dashboard deployment
-The Production optional dashboard deployment creates a Log Analytics with a custom table to log the expiration data of each certificate stored in the Key Vault, a Runbook, defined in the existing Automation Account, to ingest data in the custom table and a Workbook to visualize the expiration status of the certificates.
+The optional Production dashboard deployment sets up a Log Analytics workspace with a custom table to track the expiration dates of each certificate stored in the Key Vault. It also includes a Runbook, configured within the existing Automation Account, to ingest data into this custom table, and a Workbook to visualize the certificates' expiration status.
 
 To initiate the deployment of the optinal dashboard in the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided [above](#certificate-lifecycle-deployment). This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
 
@@ -258,7 +258,7 @@ Parameters that require your primary attention are listed in the table below:
 | **Key Vault Name** | The name of the **EXISTING** Key Vault containing the certificates.|  |
 | **Automation Account Name** | The name of the **EXISTING** Automation Account containing that will store the new Runbook|  |
 
-Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
+Additional parameters needed for the deployment can be left to their default values. Those parameters are listed in the table below:
 
 | Parameter | Description | Default value |
 |-----------|-------------|---------------|
