@@ -10,9 +10,9 @@ languages:
 ---
 
 # Certificate Lifecycle Deployment
-In this tutorial, you will learn how to deploy the  components for the **Certificate Lifecycle on Azure** scenario. 
+In this tutorial, you will learn how to deploy the  components for the **[Certificate Lifecycle on Azure](https://learn.microsoft.com/azure/architecture/example-scenario/certificate-lifecycle/)** scenario. 
 
-There are two flavours of the deployment:
+There are three flavours of the deployment:
 
 | Environment | Description | Link |
 |-------------|-------------|------|
