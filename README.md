@@ -181,7 +181,7 @@ The LAB is fully automated and requires no manual intervention. The following st
 ## Production - base deployment
 The Production base deployment creates a Key Vault, an Event Grid System Topic configured with two subscriptions, a Storage Account containing the 'certlc' queue and an Automation Account containing the RunBook and the webhook linked to the Event Grid.
 
-To initiate the deployment of the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
+To initiate the deployment of the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided [above](#certificate-lifecycle-deployment). This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
 
 Parameters that require your primary attention are listed in the table below:
 
@@ -241,7 +241,7 @@ To integrate the solution with your existing environment, you need to perform th
 ## Production - optional dashboard deployment
 The Production optional dashboard deployment creates a Log Analytics with a custom table to log the expiration data of each certificate stored in the Key Vault, a Runbook, defined in the existing Automation Account, to ingest data in the custom table and a Workbook to visualize the expiration status of the certificates.
 
-To initiate the deployment of the optinal dashboard in the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
+To initiate the deployment of the optinal dashboard in the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided [above](#certificate-lifecycle-deployment). This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
 
 Parameters that require your primary attention are listed in the table below:
 
