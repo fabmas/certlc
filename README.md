@@ -277,7 +277,8 @@ Additional parameters needed for the deployment can be left to their default val
 ### Manual Steps for the dashboard optional deployment
 To integrate the dashboard with your existing environment, you need to perform the following manual steps:
 
-- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Rule (DCR). 
-- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Endpoint (DCE). 
-- Add the 'Log Analytics Contributor' role to the managed identity of the Automation Account on the Log Analytics Workspace. 
-
+- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Rule (DCR).
+- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Endpoint (DCE).
+- Add the 'Log Analytics Contributor' role to the managed identity of the Automation Account on the Log Analytics Workspace.
+- Add the 'Key Vault Crypto Office' role to the managed identity of the Automation Account on the Key Vault.
+- Add the 'Key Vault Certificates Officer' role to the managed identity of the Automation Account on the Key Vault.
