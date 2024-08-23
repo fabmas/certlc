@@ -16,116 +16,9 @@ There are three flavours of the deployment:
 
 | Environment | Description | Link |
 |-------------|-------------|------|
-|LAB|Deploy full functional environment for DEMO testing. **No manual steps required.**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Ffulllabdeploy.json)|
-|Production (base)|Deploy only KeyVault, Event Grid, Stroage Account and Automation Account. **Manual steps required to integrate with existing resources.**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fmindeploy.json)|
-|Production (optional dashboard to deploy after the previous base deployment)|Deploy only a Log Analytics, a Runbook (on the existing Automation Account) to injest Dashboard data, and a Workbook to display certificates expiration status. **Manual steps required to integrate with existing resources.**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fdashboard.json)|
-
-## Production - base deployment
-The Production base deployment creates a Key Vault, an Event Grid System Topic configured with two subscriptions, a Storage Account containing the 'certlc' queue and an Automation Account containing the RunBook and the webhook linked to the Event Grid.
-
-To initiate the deployment of the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
-
-Parameters that require your primary attention are listed in the table below:
-
-| Parameter | Description | Default value |
-|-----------|-------------|---------------|
-| **Subscription** | The subscription where the resources will be deployed. | |
-| **Resource Group** | The resource group where the resources will be deployed. | |
-| **Region** | The region where the resources will be deployed. | |
-| **Key Vault Name** | The name of the key vault. | |
-| **Event Grid Name** | The name of the event grid system topic. | |
-| **Storage Account Name** | The lowercase name of the storage account. | |
-| **Automation Account Name** | The name of the automation account. | |
-| **CA Server** | The name of the certificate authority server.|  |
-| **SMTP Server** | The name of the SMTP server for notification e-mail.|  |
-
-Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
-
-| Parameter | Description | Default value |
-|-----------|-------------|---------------|
-| **Webhook Name** | The name of the webhook. | clc-webhook |
-| **Worker Group Name** | The name of the Hybrid Worker Group. | EnterpriseRootCA |
-| **Webhook Expiry Time** | The expiry time of the webhook. | 1 year |
-| **Schedule Start Time** | The start time of the scheduled runbook job. | Initial start time with a recurrence of 6 hours |
-| ***_Current Date Time In Ticks*** | The current date time in ticks. This parameter is used to generate unique strings to use during the deploy of role assignments.| [utcNow('yyyy-MM-dd')] |
-
-> [!NOTE]
-> The deployment process is expected to take approximately 2 minutes to complete.
-
-![Screenshot of a succeeded deployment](./.diagrams/SucceededDeployment.jpg)
-
-### Manual Steps for basic deployment
-To integrate the solution with your existing environment, you need to perform the following manual steps:
-
-- Configure an Hybrid Worker VM installing the [Azure Hybrid Worker Extension](https://learn.microsoft.com/azure/automation/extension-based-hybrid-runbook-worker-install) on the Certification Authority server (or on a server joined to the same AD domain) and adding it to the Hybrid Worker Group defined in the Automation Account.
-- Install the following Powershell modules on the Hybrid Worker VM:
-
-    ```powershell
-    # Required powershell modules for the Hybrid Worker
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-        Register-PSRepository -Default -InstallationPolicy Trusted
-        Install-Module Az.Resources -requiredVersion 6.6.0 -Repository PSGallery -Scope AllUsers -Force
-        Install-Module Az.Compute -requiredVersion 5.7.0 -Repository PSGallery -Scope AllUsers -Force
-        Install-Module Az.Storage -requiredVersion 5.5.0 -Repository PSGallery -Scope AllUsers -Force
-        Install-Module Az.KeyVault -requiredVersion 4.9.2 -Repository PSGallery -Scope AllUsers -Force
-        Install-Module Az.Accounts -requiredVersion 2.12.1
-        Install-Module PSPKI -Repository PSGallery -Scope AllUsers -Force
-    ```
-
-
-- Add the 'System' account of the Hybrid RunBook Worker VM the "Read" and "Enroll" permissions to the Certificate Template(s) used to generate the certificates.
-- Install the [Key Vault extension](#key-vault-extension) on the servers that need to retrieve the renewed certificates from the Key Vault.
-- Add the 'Key Vault Secret User' role to the the servers with the Key Vault extension on the Key Vault containing the certificates.
-- If you've specified the SMTPServer parameter during deployment, ensure the following: 
-    - the Hybrid RunBook Worker VM can reach the SMTP server, 
-    - the SMTP port is open in the firewall, 
-    - the SMTP server accepts mail submissions from the Hybrid RunBook Worker VM.
-- Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
-
-## Production - optional dashboard deployment
-The Production optional dashboard deployment creates a Log Analytics with a custom table to log the expiration data of each certificate stored in the Key Vault, a Runbook, defined in the existing Automation Account, to ingest data in the custom table and a Workbook to visualize the expiration status of the certificates.
-
-To initiate the deployment of the optinal dashboard in the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
-
-Parameters that require your primary attention are listed in the table below:
-
-| Parameter | Description | Default value |
-|-----------|-------------|---------------|
-| **Subscription** | The subscription where the resources will be deployed. | |
-| **Resource Group** | The resource group where the resources will be deployed. | |
-| **Region** | The region where the resources will be deployed. | |
-| **Workspace Name** | The name of the Log Analytics workspace. | |
-| **Table Name** | The name of the custom table defined in Loag Analytics to store certificates expiration data. |  |
-| **Data Collection Endpoint Name** | The name of the Data Collection Endpoint (DCE) |  |
-| **Data Collection Rule Name** | The name of the Data Collection Rule (DCR).|  |
-| **Workbook Display Name** | The name of the Workbook.|  |
-| **Key Vault Name** | The name of the **EXISTING** Key Vault containing the certificates.|  |
-| **Automation Account Name** | The name of the **EXISTING** Automation Account containing that will store the new Runbook|  |
-
-Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
-
-| Parameter | Description | Default value |
-|-----------|-------------|---------------|
-| **SKU** | The pricing tier of the Log Analytics Workspace | PerGB2018 |
-| **Retention In Days** | The number of days to retain data. | 120 |
-| **Resource Permissions** |Specify true to use resource or workspace permissions, or false to require workspace permissions. | true |
-| **Heartbeat Table Retention** |The number of days to retain data in Heartbeat table | 30 |
-| **WorkbookID** |The unique guid for this workbook instance | automatically created GUID |
-
-| **Schedule Dashboard Data Start Time** | The start time of the scheduled runbook job. | Initial start time with a recurrence of 1 hours |
-
-
-> [!NOTE]
-> The deployment process is expected to take approximately 2 minutes to complete.
-
-![Screenshot of a succeeded deployment](./.diagrams/SucceededDeployment.jpg)
-
-### Manual Steps for the dashboard optional deployment
-To integrate the dashboard with your existing environment, you need to perform the following manual steps:
-
-- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Rule (DCR). 
-- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Endpoint (DCE). 
-- Add the 'Log Analytics Contributor' role to the managed identity of the Automation Account on the Log Analytics Workspace. 
+|[LAB](#lab-deployment)|Deploy full functional environment for DEMO testing. **No manual steps required.**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Ffulllabdeploy.json)|
+|[Production (base)](#production---base-deployment)|Deploy only KeyVault, Event Grid, Stroage Account and Automation Account. **[Manual steps required to integrate with existing resources.](#manual-steps-for-basic-deployment)**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fmindeploy.json)|
+|[Production (optional DASHBOARD to deploy after the previous base deployment)](#production---optional-dashboard-deployment)|Deploy only a Log Analytics, a Runbook (on the existing Automation Account) to injest Dashboard data, and a Workbook to display certificates expiration status. **[Manual steps required to integrate with existing resources.](#manual-steps-for-the-dashboard-optional-deployment)**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fdashboard.json)|
 
 
 
@@ -175,9 +68,7 @@ Additional parameters needed for the deployment can be left to their default val
 | ***_Current Date Time In Ticks*** | The current date time in ticks. This parameter is used to generate unique strings to use during the deploy of role assignments.| [utcNow('yyyy-MM-dd')] |
 
 > [!NOTE]
-> The deployment process is expected to take approximately 25 minutes to complete.
-
-![Screenshot of a succeeded deployment](./.diagrams/SucceededDeployment.jpg)
+> The deployment process is expected to take approximately 30 minutes to complete.
 
 ## LAB environment description
 The LAB environment is designed to represent an in-depth technical overview of an automated renewal process for certificates from non-integrated CAs, which embodies the entire workflow shown below.
@@ -282,4 +173,111 @@ The LAB is fully automated and requires no manual intervention. The following st
     Connect to the DC VM and open the Certificate Manager Console. Select "Personal" and you should see the renewed certificate.
 
     ![Screenshot DC](./.diagrams/cert_renewal_dc.png)
+
+1. **Dashboard**
+    A scheduled job runs every hour to retrieve information about the expiration of the certificates stored in the keyvault. To ensure data are collected at the end of the deployment you can manually run the CertLCDashboardDataInjestion runbook.
+    Select 
+
+## Production - base deployment
+The Production base deployment creates a Key Vault, an Event Grid System Topic configured with two subscriptions, a Storage Account containing the 'certlc' queue and an Automation Account containing the RunBook and the webhook linked to the Event Grid.
+
+To initiate the deployment of the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
+
+Parameters that require your primary attention are listed in the table below:
+
+| Parameter | Description | Default value |
+|-----------|-------------|---------------|
+| **Subscription** | The subscription where the resources will be deployed. | |
+| **Resource Group** | The resource group where the resources will be deployed. | |
+| **Region** | The region where the resources will be deployed. | |
+| **Key Vault Name** | The name of the key vault. | |
+| **Event Grid Name** | The name of the event grid system topic. | |
+| **Storage Account Name** | The lowercase name of the storage account. | |
+| **Automation Account Name** | The name of the automation account. | |
+| **CA Server** | The name of the certificate authority server.|  |
+| **SMTP Server** | The name of the SMTP server for notification e-mail.|  |
+
+Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
+
+| Parameter | Description | Default value |
+|-----------|-------------|---------------|
+| **Webhook Name** | The name of the webhook. | clc-webhook |
+| **Worker Group Name** | The name of the Hybrid Worker Group. | EnterpriseRootCA |
+| **Webhook Expiry Time** | The expiry time of the webhook. | 1 year |
+| **Schedule Start Time** | The start time of the scheduled runbook job. | Initial start time with a recurrence of 6 hours |
+| ***_Current Date Time In Ticks*** | The current date time in ticks. This parameter is used to generate unique strings to use during the deploy of role assignments.| [utcNow('yyyy-MM-dd')] |
+
+> [!NOTE]
+> The deployment process is expected to take approximately 2 minutes to complete.
+
+### Manual Steps for basic deployment
+To integrate the solution with your existing environment, you need to perform the following manual steps:
+
+- Configure an Hybrid Worker VM installing the [Azure Hybrid Worker Extension](https://learn.microsoft.com/azure/automation/extension-based-hybrid-runbook-worker-install) on the Certification Authority server (or on a server joined to the same AD domain) and adding it to the Hybrid Worker Group defined in the Automation Account.
+- Install the following Powershell modules on the Hybrid Worker VM:
+
+    ```powershell
+    # Required powershell modules for the Hybrid Worker
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+        Register-PSRepository -Default -InstallationPolicy Trusted
+        Install-Module Az.Resources -requiredVersion 6.6.0 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.Compute -requiredVersion 5.7.0 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.Storage -requiredVersion 5.5.0 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.KeyVault -requiredVersion 4.9.2 -Repository PSGallery -Scope AllUsers -Force
+        Install-Module Az.Accounts -requiredVersion 2.12.1
+        Install-Module PSPKI -Repository PSGallery -Scope AllUsers -Force
+    ```
+
+
+- Add the 'System' account of the Hybrid RunBook Worker VM the "Read" and "Enroll" permissions to the Certificate Template(s) used to generate the certificates.
+- Install the [Key Vault extension](#key-vault-extension) on the servers that need to retrieve the renewed certificates from the Key Vault.
+- Add the 'Key Vault Secret User' role to the the servers with the Key Vault extension on the Key Vault containing the certificates.
+- If you've specified the SMTPServer parameter during deployment, ensure the following: 
+    - the Hybrid RunBook Worker VM can reach the SMTP server, 
+    - the SMTP port is open in the firewall, 
+    - the SMTP server accepts mail submissions from the Hybrid RunBook Worker VM.
+- Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
+
+## Production - optional dashboard deployment
+The Production optional dashboard deployment creates a Log Analytics with a custom table to log the expiration data of each certificate stored in the Key Vault, a Runbook, defined in the existing Automation Account, to ingest data in the custom table and a Workbook to visualize the expiration status of the certificates.
+
+To initiate the deployment of the optinal dashboard in the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
+
+Parameters that require your primary attention are listed in the table below:
+
+| Parameter | Description | Default value |
+|-----------|-------------|---------------|
+| **Subscription** | The subscription where the resources will be deployed. | |
+| **Resource Group** | The resource group where the resources will be deployed. | |
+| **Region** | The region where the resources will be deployed. | |
+| **Workspace Name** | The name of the Log Analytics workspace. | |
+| **Table Name** | The name of the custom table defined in Loag Analytics to store certificates expiration data. |  |
+| **Data Collection Endpoint Name** | The name of the Data Collection Endpoint (DCE) |  |
+| **Data Collection Rule Name** | The name of the Data Collection Rule (DCR).|  |
+| **Workbook Display Name** | The name of the Workbook.|  |
+| **Key Vault Name** | The name of the **EXISTING** Key Vault containing the certificates.|  |
+| **Automation Account Name** | The name of the **EXISTING** Automation Account containing that will store the new Runbook|  |
+
+Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
+
+| Parameter | Description | Default value |
+|-----------|-------------|---------------|
+| **SKU** | The pricing tier of the Log Analytics Workspace | PerGB2018 |
+| **Retention In Days** | The number of days to retain data. | 120 |
+| **Resource Permissions** |Specify true to use resource or workspace permissions, or false to require workspace permissions. | true |
+| **Heartbeat Table Retention** |The number of days to retain data in Heartbeat table | 30 |
+| **WorkbookID** |The unique guid for this workbook instance | automatically created GUID |
+
+| **Schedule Dashboard Data Start Time** | The start time of the scheduled runbook job. | Initial start time with a recurrence of 1 hours |
+
+
+> [!NOTE]
+> The deployment process is expected to take approximately 2 minutes to complete.
+
+### Manual Steps for the dashboard optional deployment
+To integrate the dashboard with your existing environment, you need to perform the following manual steps:
+
+- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Rule (DCR). 
+- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Endpoint (DCE). 
+- Add the 'Log Analytics Contributor' role to the managed identity of the Automation Account on the Log Analytics Workspace. 
 
