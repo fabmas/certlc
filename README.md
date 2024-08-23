@@ -125,6 +125,14 @@ The LAB environment is structured to showcase the seamless workflow, allowing fo
 1. **Real-World Implementation:**
     In a real-world scenario, an additional step is required to bind the certificate to the respective service (e.g., binding the certificate to IIS for a web certificate).
 
+The LAB environment also includes the deployment of a Dashboard to monitor the expiration status of certificates stored in the Key Vault. While these resources are optional in the production environment, they are deployed and automatically configured in the LAB environment to showcase the dashboard's output. The workflow includes the following additional steps:
+
+1. **Data Ingestion Runbook Execution:**
+    A Runbook, executed directly from Azure (without requiring the context of a Hybrid Worker), retrieves certificate data from the Key Vault and sends this information to a custom table defined in the Log Analytics workspace. The Runbook runs on a scheduled cadence.
+
+1. **Workbook Visualization:**
+    A Workbook queries the data from the custom table and displays it in both a pie chart and a detailed table, highlighting certificates in the following statuses: "Not Expired" (green), "Expiring Soon" (yellow), and "Expired" (red).
+
 ## Executing the Certificate Lifecycle in the LAB environment
 The LAB is fully automated and requires no manual intervention. The following steps are provided to verify the whole process and to showcase the seamless workflow.
 
