@@ -16,16 +16,14 @@ There are two flavours of the deployment:
 
 | Environment | Description | Link |
 |-------------|-------------|------|
-|Production|Deploy only KeyVault, Event Grid, Stroage Account and Automation Account|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fmindeploy.json)|
-|LAB|Deploy full functional environment for DEMO testing|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Ffulllabdeploy.json)|
+|LAB|Deploy full functional environment for DEMO testing. **No manual steps required.**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Ffulllabdeploy.json)|
+|Production (base)|Deploy only KeyVault, Event Grid, Stroage Account and Automation Account. **Manual steps required to integrate with existing resources.**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fmindeploy.json)|
+|Production (optional dashboard to deploy after the previous base deployment)|Deploy only a Log Analytics, a Runbook (on the existing Automation Account) to injest Dashboard data, and a Workbook to display certificates expiration status. **Manual steps required to integrate with existing resources.**|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ffabmas%2Fcertlc%2Fmain%2F.armtemplate%2Fdashboard.json)|
 
-## Production deployment
-The Production creates a Key Vault, an Event Grid System Topic configured with two subscriptions, a Storage Account containing the 'certlc' queue and an Automation Account containing the RunBook and the webhook linked to the Event Grid.
+## Production - base deployment
+The Production base deployment creates a Key Vault, an Event Grid System Topic configured with two subscriptions, a Storage Account containing the 'certlc' queue and an Automation Account containing the RunBook and the webhook linked to the Event Grid.
 
 To initiate the deployment of the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
-
-> [!IMPORTANT]
-> For resources such as key vaults, automation accounts and event-grid, which necessitate globally unique names, kindly replace the *`UNIQUESTRING`* placeholder with a unique string of your choice, following the resource's constraints (e.g., maximum character count, lowercase only, etc.).
 
 Parameters that require your primary attention are listed in the table below:
 
@@ -34,10 +32,10 @@ Parameters that require your primary attention are listed in the table below:
 | **Subscription** | The subscription where the resources will be deployed. | |
 | **Resource Group** | The resource group where the resources will be deployed. | |
 | **Region** | The region where the resources will be deployed. | |
-| **Key Vault Name** | The name of the key vault. | DEMO-KV-*\<`UNIQUESTRING`>* |
-| **Event Grid Name** | The name of the event grid system topic. | DEMO-EG-*\<`UNIQUESTRING`>* |
-| **Storage Account Name** | The name of the storage account. | demosa*\<`UNIQUESTRING`>* |
-| **Automation Account Name** | The name of the automation account. | DEMO-AA-*\<`UNIQUESTRING`>* |
+| **Key Vault Name** | The name of the key vault. | |
+| **Event Grid Name** | The name of the event grid system topic. | |
+| **Storage Account Name** | The lowercase name of the storage account. | |
+| **Automation Account Name** | The name of the automation account. | |
 | **CA Server** | The name of the certificate authority server.|  |
 | **SMTP Server** | The name of the SMTP server for notification e-mail.|  |
 
@@ -56,7 +54,8 @@ Additional parameters needed for the deployment can be left to their default val
 
 ![Screenshot of a succeeded deployment](./.diagrams/SucceededDeployment.jpg)
 
-To integrate the solution with your existing environment, you need to perform the following steps:
+### Manual Steps for basic deployment
+To integrate the solution with your existing environment, you need to perform the following manual steps:
 
 - Configure an Hybrid Worker VM installing the [Azure Hybrid Worker Extension](https://learn.microsoft.com/azure/automation/extension-based-hybrid-runbook-worker-install) on the Certification Authority server (or on a server joined to the same AD domain) and adding it to the Hybrid Worker Group defined in the Automation Account.
 - Install the following Powershell modules on the Hybrid Worker VM:
@@ -82,6 +81,53 @@ To integrate the solution with your existing environment, you need to perform th
     - the SMTP port is open in the firewall, 
     - the SMTP server accepts mail submissions from the Hybrid RunBook Worker VM.
 - Import the certificates into the Key Vault and **TAG** them with the administrator e-mail address for notification purposes. If multiple recipients are required, the e-mail addresses should be separated by comma or semicolon. The expected tag name is 'Recipient' and the value is the e-mail address(es) of the administrator(s).
+
+## Production - optional dashboard deployment
+The Production optional dashboard deployment creates a Log Analytics with a custom table to log the expiration data of each certificate stored in the Key Vault, a Runbook, defined in the existing Automation Account, to ingest data in the custom table and a Workbook to visualize the expiration status of the certificates.
+
+To initiate the deployment of the optinal dashboard in the Production environment, verify to have the *Owner* role on the subscription then click on the **Deploy to Azure** button provided above. This action will trigger the deployment process within the Azure Portal. You will be prompted to provide input parameters.
+
+Parameters that require your primary attention are listed in the table below:
+
+| Parameter | Description | Default value |
+|-----------|-------------|---------------|
+| **Subscription** | The subscription where the resources will be deployed. | |
+| **Resource Group** | The resource group where the resources will be deployed. | |
+| **Region** | The region where the resources will be deployed. | |
+| **Workspace Name** | The name of the Log Analytics workspace. | |
+| **Table Name** | The name of the custom table defined in Loag Analytics to store certificates expiration data. |  |
+| **Data Collection Endpoint Name** | The name of the Data Collection Endpoint (DCE) |  |
+| **Data Collection Rule Name** | The name of the Data Collection Rule (DCR).|  |
+| **Workbook Display Name** | The name of the Workbook.|  |
+| **Key Vault Name** | The name of the **EXISTING** Key Vault containing the certificates.|  |
+| **Automation Account Name** | The name of the **EXISTING** Automation Account containing that will store the new Runbook|  |
+
+Additional parameters needed for the deployment can be left to their default values for the purpose of this LAB. Those parameters are listed in the table below:
+
+| Parameter | Description | Default value |
+|-----------|-------------|---------------|
+| **SKU** | The pricing tier of the Log Analytics Workspace | PerGB2018 |
+| **Retention In Days** | The number of days to retain data. | 120 |
+| **Resource Permissions** |Specify true to use resource or workspace permissions, or false to require workspace permissions. | true |
+| **Heartbeat Table Retention** |The number of days to retain data in Heartbeat table | 30 |
+| **WorkbookID** |The unique guid for this workbook instance | automatically created GUID |
+
+| **Schedule Dashboard Data Start Time** | The start time of the scheduled runbook job. | Initial start time with a recurrence of 1 hours |
+
+
+> [!NOTE]
+> The deployment process is expected to take approximately 2 minutes to complete.
+
+![Screenshot of a succeeded deployment](./.diagrams/SucceededDeployment.jpg)
+
+### Manual Steps for the dashboard optional deployment
+To integrate the dashboard with your existing environment, you need to perform the following manual steps:
+
+- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Rule (DCR). 
+- Add the 'Monitoring Metrics Publisher' role to the managed identity of the Automation Account on the Dta Collection Endpoint (DCE). 
+- Add the 'Log Analytics Contributor' role to the managed identity of the Automation Account on the Log Analytics Workspace. 
+
+
 
 ## LAB deployment
 The goal of the LAB is to showcase a comprehensive solution for the automated renewal of certificates issued by non-integrated Certificate Authorities.
